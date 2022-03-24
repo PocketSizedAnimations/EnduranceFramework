@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Pocket Sized Animations
 
 
-#include "Components/InventoryManagerComponent.h"
+#include "Components/InventoryItemComponent.h"
 
 // Sets default values for this component's properties
-UInventoryManagerComponent::UInventoryManagerComponent()
+UInventoryItemComponent::UInventoryItemComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -15,7 +15,7 @@ UInventoryManagerComponent::UInventoryManagerComponent()
 
 
 // Called when the game starts
-void UInventoryManagerComponent::BeginPlay()
+void UInventoryItemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -25,7 +25,7 @@ void UInventoryManagerComponent::BeginPlay()
 
 
 // Called every frame
-void UInventoryManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInventoryItemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

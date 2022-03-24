@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FInventoryModule : public IModuleInterface
+class FVehicleModule : public IModuleInterface
 {
 public:
 

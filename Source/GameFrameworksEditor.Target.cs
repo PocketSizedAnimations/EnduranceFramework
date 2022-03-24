@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2022 Pocket Sized Animations
 
 using UnrealBuildTool;
 using System.Collections.Generic;
@@ -10,6 +10,6 @@ public class GameFrameworksEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
-		ExtraModuleNames.AddRange( new string[] { "GameFrameworks", "InventoryModule" } );
+		ExtraModuleNames.AddRange( new string[] { "GameFrameworks", "InteractionsModule", "InventoryModule" } );
 	}
 }

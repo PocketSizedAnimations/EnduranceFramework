@@ -3,9 +3,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class InventoryModule : ModuleRules
+public class VehicleModule : ModuleRules
 {
-	public InventoryModule(ReadOnlyTargetRules Target) : base(Target)
+	public VehicleModule(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

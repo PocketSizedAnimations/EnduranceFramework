@@ -4,4 +4,4 @@
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(InventoryModule, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(InteractionsModule, Log, All);

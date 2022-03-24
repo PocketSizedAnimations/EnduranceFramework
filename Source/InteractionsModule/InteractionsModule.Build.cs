@@ -3,9 +3,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class InventoryModule : ModuleRules
+public class InteractionsModule : ModuleRules
 {
-	public InventoryModule(ReadOnlyTargetRules Target) : base(Target)
+	public InteractionsModule(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

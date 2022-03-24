@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2022 Pocket Sized Animations
 
 #pragma once
 
@@ -11,6 +11,11 @@ UCLASS( ClassGroup=(Inventory), meta=(BlueprintSpawnableComponent) )
 class INVENTORYMODULE_API UInventoryManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+
+		//===================================================================================================
+		//=============================================FUNCTIONS=============================================
+		//===================================================================================================
 
 public:	
 	// Sets default values for this component's properties

@@ -10,6 +10,6 @@ public class GameFrameworksEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
-		ExtraModuleNames.AddRange( new string[] { "GameFrameworks", "InteractionsModule", "InventoryModule" } );
+		ExtraModuleNames.AddRange( new string[] { "GameFrameworks", "InteractionsModule", "InventoryModule", "EquipmentModule" } );
 	}
 }

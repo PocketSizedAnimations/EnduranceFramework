@@ -2,11 +2,35 @@
 
 
 #include "Actors/VehicleBase.h"
+#include "Components/EngineComponent.h"
+#include "Components/VehicleMovementComponent.h"
+#include "..\..\Public\Actors\VehicleBase.h"
 
 // Sets default values
-AVehicleBase::AVehicleBase()
+AVehicleBase::AVehicleBase(const FObjectInitializer& ObjectInitializer)
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	Mesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("MeshComponent"));
+	if (Mesh)
+	{
+		SetRootComponent(Mesh);
+	}
+
+	Engine = ObjectInitializer.CreateDefaultSubobject<UEngineComponent>(this, TEXT("EngineComponent"));
+	if (Engine)
+	{
+		Engine->SetupAttachment(Mesh);
+	}
+
+	VehicleMovement = ObjectInitializer.CreateDefaultSubobject<UVehicleMovementComponent>(this, TEXT("VehicleMovementComponent"));
+
+	/*replication configuration*/
+	FRepMovement RepMovement = GetReplicatedMovement();
+	RepMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
+	RepMovement.VelocityQuantizationLevel = EVectorQuantization::RoundOneDecimal;
+	RepMovement.RotationQuantizationLevel = ERotatorQuantization::ShortComponents;
+	SetReplicatedMovement(RepMovement);
+
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -30,5 +54,32 @@ void AVehicleBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	check(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis(AccelerateInputName,this,&AVehicleBase::Accelerate);
+	PlayerInputComponent->BindAxis(BrakeInputName, this, &AVehicleBase::Brake);
+
+	PlayerInputComponent->BindAction(StartEngineInputName, EInputEvent::IE_Pressed, this, &AVehicleBase::StartEngine);
+	PlayerInputComponent->BindAction(StopEngineInputName, EInputEvent::IE_Pressed, this, &AVehicleBase::StopEngine);
+}
+
+void AVehicleBase::Accelerate(float Value)
+{	
+	VehicleMovement->AddInputVector(GetActorForwardVector() * Value);
+}
+
+void AVehicleBase::Brake(float Value)
+{
+
+}
+
+void AVehicleBase::StartEngine()
+{
+	Engine->StartEngine();
+}
+
+void AVehicleBase::StopEngine()
+{
+	Engine->StopEngine();
 }
 

@@ -41,6 +41,14 @@
 				"Engine",
 				"Synthesis"
 			]
+		},
+		{
+			"Name": "HealthAndStaminaModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [

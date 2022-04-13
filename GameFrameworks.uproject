@@ -50,6 +50,14 @@
 				"Engine",
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "FirstPersonModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [

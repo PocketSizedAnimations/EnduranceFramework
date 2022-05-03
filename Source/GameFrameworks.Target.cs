@@ -10,6 +10,6 @@ public class GameFrameworksTarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
-		ExtraModuleNames.AddRange( new string[] { "GameFrameworks", "FirstPersonModule", "InteractionsModule", "InventoryModule", "EquipmentModule", "HealthAndStaminaModule"} );
+		ExtraModuleNames.AddRange( new string[] { "GameFrameworks", "ExtendedAIModule","FirstPersonModule", "InteractionsModule", "InventoryModule", "EquipmentModule", "HealthAndStaminaModule","MissionModule", "WeaponsModule"} );
 	}
 }

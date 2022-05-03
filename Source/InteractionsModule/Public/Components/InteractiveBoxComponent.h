@@ -18,10 +18,10 @@ class INTERACTIONSMODULE_API UInteractiveBoxComponent : public UBoxComponent, pu
 public:
 	/*whether or not this object can be interacted with currently - attempting to use an interactive that has this set as false will immedietely cancel the action - still shows up in traces*/
 	UPROPERTY(EditAnywhere, Category = "Interactions")
-		bool bIsInteractive = 1;
+		bool bIsInteractive = true;
 	/*when disabled - will be disregarded by a InteractiveManager's trace entirely - preventing it from showing up in the list*/
 	UPROPERTY(EditAnywhere, Category = "Interactions")
-		bool bDisableInteraction = 0;
+		bool bDisableInteraction = false;
 
 	
 	/*DELEGATES/EVENTS*/

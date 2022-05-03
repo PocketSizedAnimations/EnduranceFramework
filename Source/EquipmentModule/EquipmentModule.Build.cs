@@ -29,6 +29,7 @@ public class EquipmentModule : ModuleRules
 			new string[]
 			{
 				"Core"
+				
 			}
 			);
 			
@@ -38,7 +39,9 @@ public class EquipmentModule : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-				"Engine"
+				"Engine",
+				"UMG",
+				"Synthesis"
 			}
 			);
 		

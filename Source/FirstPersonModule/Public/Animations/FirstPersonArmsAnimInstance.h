@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(abstract)
 class FIRSTPERSONMODULE_API UFirstPersonArmsAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()

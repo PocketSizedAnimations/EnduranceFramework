@@ -38,7 +38,8 @@ public class InventoryModule : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-				"Engine"
+				"Engine",
+				"UMG"
 			}
 			);
 		

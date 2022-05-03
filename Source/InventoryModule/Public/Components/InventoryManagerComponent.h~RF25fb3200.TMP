@@ -1,0 +1,31 @@
+// Copyright (c) 2022 Pocket Sized Animations
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "InventoryManagerComponent.generated.h"
+
+
+UCLASS( ClassGroup=(Inventory), meta=(BlueprintSpawnableComponent), HideCategories = (Sockets, ComponentTick, ComponentReplication, Activation, Cooking, Collision, AssetUserData))
+class INVENTORYMODULE_API UInventoryManagerComponent : public UActorComponent
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere, meta = (MustImplement="InventoryItemInterface"))
+		TArray<TSubclassOf<AActor>> DefaultItems;
+
+		//===================================================================================================
+		//=============================================FUNCTIONS=============================================
+		//===================================================================================================
+
+public:	
+	// Sets default values for this component's properties
+	UInventoryManagerComponent();
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+		
+};

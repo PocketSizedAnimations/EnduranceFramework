@@ -80,3 +80,5 @@ DerivedDataCache/*
 #Content Folder (since we're just a modules system)
 /Content/*	
 /Plugins/HoudiniEngine
+/Plugins/EditorWindowPlugin
+/Plugins/EditorToolbarButton

@@ -27,7 +27,7 @@ void UFirstPersonViewComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/**/
+	/*all clients run setup*/
 	InitializeFirstPersonScene();
 	InitializeCameraComponent();
 	InitializeArmsMesh();

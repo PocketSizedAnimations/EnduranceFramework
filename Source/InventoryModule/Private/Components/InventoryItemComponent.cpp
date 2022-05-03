@@ -2,33 +2,74 @@
 
 
 #include "Components/InventoryItemComponent.h"
+#include "Components/InventoryManagerComponent.h"
 
 // Sets default values for this component's properties
 UInventoryItemComponent::UInventoryItemComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	/*replication*/
+	SetIsReplicatedByDefault(true);
+	/*ticking*/
+	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
 
 // Called when the game starts
 void UInventoryItemComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	Super::BeginPlay();	
 }
 
-
-// Called every frame
-void UInventoryItemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInventoryItemComponent::OnEquipped()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	//OnEquipBegin.Broadcast();
+}
+
+void UInventoryItemComponent::OnEquippedFinished()
+{
+}
+
+void UInventoryItemComponent::BeginEquip()
+{
+
+}
+
+void UInventoryItemComponent::EndEquip()
+{
+
+}
+
+void UInventoryItemComponent::EnableCollision()
+{
+	if (GetOwner())
+	{
+		GetOwner()->SetActorEnableCollision(true);
+	}
+}
+
+void UInventoryItemComponent::DisableCollision()
+{
+	if (GetOwner())
+	{
+		GetOwner()->SetActorEnableCollision(false);
+	}
+}
+
+void UInventoryItemComponent::EnableVisibility()
+{
+	if (GetOwner())
+	{
+		GetOwner()->SetActorHiddenInGame(false);
+	}
+}
+
+void UInventoryItemComponent::DisableVisibility()
+{
+	if (GetOwner())
+	{
+		GetOwner()->SetActorHiddenInGame(true);
+	}
 }
 

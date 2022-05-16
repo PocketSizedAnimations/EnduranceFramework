@@ -57,110 +57,22 @@ void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Item
 	SpawnTransform.SetRotation(GetOwner()->GetActorRotation().Quaternion());
 	SpawnTransform.SetScale3D(FVector(1));
 
-	/*auto-equip*/
-	AActor* AutoEquip = nullptr;
-
 	for (TSubclassOf<AActor> ItemClass : Items)
 	{		
 		AActor* Item = GetWorld()->SpawnActor<AActor>(ItemClass, SpawnTransform, SpawnParams);
 		if (Item)
 		{
-			if (UInventoryItemComponent* ItemComp = GetItemComponent(Item))
+			if (UInventoryItemComponent* ItemComp = Cast<UInventoryItemComponent>(Item->GetComponentByClass(UInventoryItemComponent::StaticClass())))
 			{				
 				AddItem(ItemComp->GetOwner());
-				
-				if (ShouldAutoEquip(Item))
-					AutoEquip = Item;
 			}
 		}
 	}
-
-	if (AutoEquip != nullptr)
-		Equip(AutoEquip);
 }
 
 void UInventoryManagerComponent::ClearInventory()
 {
 
-}
-
-
-//=====================================
-//==============EQUIPPING==============
-//=====================================
-
-void UInventoryManagerComponent::Equip(AActor* Item)
-{
-	bool bInstantComplete = false;
-
-	/*validation check*/
-	if (!bCanEquipItems || Item == nullptr)
-		return;
-	
-	/*ensure-registration is complete*/
-	RegisterItem(Item);
-	
-	/*if we already have the item equipped - go ahead and auto-unequip it*/
-	if (Item == CurrentlyEquipped)
-	{
-		Unequip(CurrentlyEquipped);
-		return;
-	}
-
-	/*unequip anything we already have first*/
-	if (CurrentlyEquipped != nullptr)
-	{
-		PendingEquip = Item;
-		Unequip(Item);
-		return;
-	}
-
-	/*mark this item as pending equip*/
-	PendingEquip = Item;
-
-	/*notify the component it's being equipped */
-	if(UInventoryItemComponent* ItemComp = GetItemComponent(Item))
-	{ 
-		ItemComp->BeginEquip();		
-	}
-}
-
-/*callback function - should be triggered by the item itself*/
-void UInventoryManagerComponent::OnEquipFinished(AActor* Item)
-{
-	if (Item == nullptr)
-		return;
-
-	CurrentlyEquipped = Item;
-	PendingEquip = nullptr;
-
-}
-
-void UInventoryManagerComponent::Unequip(AActor* Item)
-{
-
-}
-
-void UInventoryManagerComponent::OnUnequipFinished(AActor* Item)
-{		
-	if (PendingEquip)
-	{			
-		Equip(PendingEquip);
-	}
-}
-
-bool UInventoryManagerComponent::ShouldAutoEquip(AActor* Item)
-{
-	if (!Item)
-		return false;
-
-	if (UInventoryItemComponent* ItemComp = GetItemComponent(Item))
-	{
-		if (ItemComp->bAutoEquip)
-			return true;
-	}
-	
-	return false;
 }
 
 
@@ -248,13 +160,6 @@ void UInventoryManagerComponent::RegisterItem(AActor* Item)
 		Item->SetOwner(GetOwner());
 		ItemComp->InventoryManager = this;
 	}
-}
-
-UInventoryItemComponent* UInventoryManagerComponent::GetItemComponent(AActor* Item)
-{
-	UInventoryItemComponent* ReturnItem = Cast<UInventoryItemComponent>(Item->GetComponentByClass(UInventoryItemComponent::StaticClass()));
-
-	return ReturnItem;
 }
 
 

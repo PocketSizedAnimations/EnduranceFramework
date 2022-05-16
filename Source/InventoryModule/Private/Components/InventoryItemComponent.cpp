@@ -3,7 +3,6 @@
 
 #include "Components/InventoryItemComponent.h"
 #include "Components/InventoryManagerComponent.h"
-#include "Events/ItemEvent.h"
 
 // Sets default values for this component's properties
 UInventoryItemComponent::UInventoryItemComponent()
@@ -22,35 +21,31 @@ void UInventoryItemComponent::BeginPlay()
 	Super::BeginPlay();	
 }
 
+void UInventoryItemComponent::OnEquipped()
+{
+
+	//OnEquipBegin.Broadcast();
+}
+
+void UInventoryItemComponent::OnEquippedFinished()
+{
+}
 
 void UInventoryItemComponent::BeginEquip()
 {
-	EquipState = EEquipState::Equipping;
 
-	
-	if (EquipLogic == EEquipCompletionLogic::Instant)
-		EndEquip();
-
-	//else if(EquipLogic == EEquipCompletionLogic::Delayed)
 }
 
 void UInventoryItemComponent::EndEquip()
-{	
-	EquipState = EEquipState::Equipped;
-	InventoryManager->OnEquipFinished(GetOwner());
+{
 
-	for (auto Event : OnEquipEvents)
-	{
-		if (Event != nullptr && Event->bEnabled)
-			Event->OnItemEventActivated(GetOwner(), GetOwner()->GetOwner(), InventoryManager);
-	}
 }
 
 void UInventoryItemComponent::EnableCollision()
 {
 	if (GetOwner())
 	{
-		GetOwner()->SetActorEnableCollision(true);		
+		GetOwner()->SetActorEnableCollision(true);
 	}
 }
 

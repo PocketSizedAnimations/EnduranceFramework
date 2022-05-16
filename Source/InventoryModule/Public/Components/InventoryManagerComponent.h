@@ -10,9 +10,22 @@
 UCLASS( ClassGroup=(Inventory), meta=(BlueprintSpawnableComponent), HideCategories = (Sockets, ComponentTick, ComponentReplication, Activation, Cooking, Collision, AssetUserData))
 class INVENTORYMODULE_API UInventoryManagerComponent : public UActorComponent
 {
+	friend class UInventoryItemComponent;
+
 	GENERATED_BODY()
 public:
 
+protected:
+	UPROPERTY(EditDefaultsOnly)
+		bool bCanEquipItems = false;
+	/*what's currently active for this manager*/
+	UPROPERTY()
+		AActor* CurrentlyEquipped;
+private:
+	/*used to track an item that wants to be equipped but waiting on an action to complete*/
+	UPROPERTY()
+		AActor* PendingEquip;
+protected:
 	UPROPERTY(EditAnywhere, meta = (MustImplement="InventoryItemInterface"))
 		TArray<TSubclassOf<AActor>> DefaultItems;
 protected:
@@ -47,6 +60,25 @@ protected:
 	UFUNCTION()
 		virtual void ClearInventory();
 
+	//=====================================
+	//==============EQUIPPING==============
+	//=====================================
+public:
+	UFUNCTION(BlueprintCallable)
+		virtual void Equip(AActor* Item);
+protected:
+	UFUNCTION()
+		virtual void OnEquipFinished(AActor* Item);
+public:
+	UFUNCTION(BlueprintCallable)
+		virtual void Unequip(AActor* Item);
+protected:
+	UFUNCTION()
+		virtual void OnUnequipFinished(AActor* Item);
+
+	UFUNCTION()
+		virtual bool ShouldAutoEquip(AActor* Item);
+
 	//=======================================
 	//============ITEM MANAGEMENT============
 	//=======================================
@@ -67,6 +99,10 @@ private:
 		void RegisterItem(AActor* Item);
 
 
+
+protected:
+	UFUNCTION(BlueprintPure)
+		virtual UInventoryItemComponent* GetItemComponent(AActor* Item);
 
 	//==============================
 	//==============UI==============

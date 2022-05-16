@@ -17,7 +17,16 @@ enum class EEquipCompletionLogic : uint8
 	WaitForNotification
 };
 
-UCLASS( ClassGroup=(Inventory), meta=(BlueprintSpawnableComponent), HideCategories=(Sockets,ComponentTick,ComponentReplication,Activation,Cooking,Collision,AssetUserData))
+UENUM()
+enum class EEquipState : uint8 {
+	NONE,
+	InStorage,
+	Equipping,
+	Unequipping,
+	Equipped
+};
+
+UCLASS( ClassGroup=(Inventory), AutoExpandCategories=("Equipping/Unequipping|Equipping"), meta = (BlueprintSpawnableComponent), HideCategories = (Sockets, ComponentTick, ComponentReplication, Activation, Cooking, Collision, AssetUserData))
 class INVENTORYMODULE_API UInventoryItemComponent : public UActorComponent
 {
 	friend class UInventoryManagerComponent;
@@ -29,14 +38,31 @@ private:
 	UPROPERTY()
 		class UInventoryManagerComponent* InventoryManager;
 private:
-	UPROPERTY(EditDefaultsOnly)
+	/*automatically equips this item when picked up or spawned into inventory*/
+	UPROPERTY(EditAnywhere, Category = "Equipping/Unequipping")
+		bool bAutoEquip = false;
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping")
+		uint8 EquipPriority = 0;
+	UPROPERTY()
+		EEquipState EquipState = EEquipState::NONE;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping")
 		EEquipCompletionLogic EquipLogic;
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EquipLogic == EEquipCompletionLogic::Delayed"))
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping", meta = (EditCondition = "EquipLogic == EEquipCompletionLogic::Delayed"))
 		float EquipDelay = 3.0f;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping", meta = (EditInline, AdvancedDisplay))
+		TArray<class UItemEvent*> OnEquipEvents;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping")
 		EEquipCompletionLogic UnequipLogic;
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "UnEquipLogic == EEquipCompletionLogic::Delayed"))
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping", meta = (EditCondition = "UnEquipLogic == EEquipCompletionLogic::Delayed"))
 		float UnequipDelay = 3.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping", meta = (EditInline, AdvancedDisplay))
+		TArray<class UItemEvent*> OnUnequipEvents;
+
+
+
 
 public:
 	UPROPERTY(BlueprintAssignable)
@@ -58,11 +84,6 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-private:
-	UFUNCTION()
-		virtual void OnEquipped();
-	UFUNCTION()
-		virtual void OnEquippedFinished();
 private:
 	UFUNCTION()
 		virtual void BeginEquip();

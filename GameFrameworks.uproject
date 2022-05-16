@@ -15,7 +15,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"UMG"
+				"UMG",
+				"CoreUObject"
 			]
 		},
 		{
@@ -107,7 +108,7 @@
 		},
 		{
 			"Name": "HoudiniEngine",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "EditorWindowPlugin",

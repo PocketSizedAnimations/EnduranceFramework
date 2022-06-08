@@ -3,6 +3,7 @@
 
 #include "Components/InventoryManagerComponent.h"
 #include "Components/InventoryItemComponent.h"
+#include "Misc/InventoryTemplate.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/InventoryContainerWidget.h"
 
@@ -28,6 +29,17 @@ void UInventoryManagerComponent::BeginPlay()
 		SpawnDefaultInventory();
 }
 
+void UInventoryManagerComponent::SpawnInventoryFromTemplate(UInventoryTemplate* InventoryTemplate, bool bClearExisting)
+{
+	if (!InventoryTemplate)
+		return;
+
+	if (bClearExisting)
+		ClearInventory();
+
+	SpawnInventory(InventoryTemplate->Inventory, bClearExisting);
+}
+
 void UInventoryManagerComponent::SpawnDefaultInventory()
 {
 	/*safety check*/
@@ -37,14 +49,14 @@ void UInventoryManagerComponent::SpawnDefaultInventory()
 	SpawnInventory(DefaultItems, true);
 }
 
-void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bRemoveExisting)
+void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting)
 {
 	/*server-check*/
 	if (GetOwner() == nullptr || GetOwner()->GetNetMode() == NM_Client)
 		return;
 	
 	/*destroy existing inventory*/
-	if (bRemoveExisting)
+	if (bClearExisting)
 		ClearInventory();
 
 	/*initialize*/

@@ -53,12 +53,15 @@ protected:
 	virtual void BeginPlay() override;
 
 
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+		virtual void SpawnInventoryFromTemplate(class UInventoryTemplate* InventoryTemplate, bool bClearExisting = true);
 	UFUNCTION()
 		virtual void SpawnDefaultInventory();
-	UFUNCTION()
-		virtual void SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bRemoveExisting = true);
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+		virtual void SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting = true);
 	UFUNCTION()
 		virtual void ClearInventory();
+
 
 	//=====================================
 	//==============EQUIPPING==============

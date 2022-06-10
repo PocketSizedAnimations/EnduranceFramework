@@ -74,6 +74,10 @@ void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Item
 
 	for (TSubclassOf<AActor> ItemClass : Items)
 	{		
+		/*skip blank entries*/
+		if (ItemClass == nullptr)
+			continue;
+
 		AActor* Item = GetWorld()->SpawnActor<AActor>(ItemClass, SpawnTransform, SpawnParams);
 		if (Item)
 		{

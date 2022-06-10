@@ -10,7 +10,7 @@
 // Sets default values for this component's properties
 UFirstPersonViewComponent::UFirstPersonViewComponent(const FObjectInitializer& ObjectInitializer)
 {
-	ArmsAnimationClass = UFirstPersonArmsAnimInstance::StaticClass();
+	//ArmsAnimationClass = UFirstPersonArmsAnimInstance::StaticClass();
 
 	bAutoActivate = true;
 	PrimaryComponentTick.bCanEverTick = true;

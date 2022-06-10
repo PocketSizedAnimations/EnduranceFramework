@@ -16,12 +16,14 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 		SetRootComponent(Mesh);
 	}
 	
-	//ItemComponent = ObjectInitializer.CreateDefaultSubobject<UInventoryItemComponent>(this, TEXT("ItemComp"));
-	//if (ItemComponent)
-	//{
-	//	ItemComponent->RegisterComponent();
-	//	//ItemComponent->OnEquipBegin.AddDynamic(this, &AWeapon::OnEquipBegin);
-	//}
+	ItemComponent = ObjectInitializer.CreateDefaultSubobject<UInventoryItemComponent>(this, TEXT("ItemComp"));
+	AddOwnedComponent(ItemComponent);
+	if (ItemComponent)
+	{
+		
+		//ItemComponent->RegisterComponent();
+		//ItemComponent->OnEquipBegin.AddDynamic(this, &AWeapon::OnEquipBegin);
+	}
 
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;

@@ -50,7 +50,7 @@ private:
 		EEquipCompletionLogic EquipLogic;
 	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping", meta = (EditCondition = "EquipLogic == EEquipCompletionLogic::Delayed"))
 		float EquipDelay = 3.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping", meta = (EditInline, AdvancedDisplay))
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Equipping/Unequipping|Equipping", meta = (AdvancedDisplay))
 		TArray<class UItemEvent*> OnEquipEvents;
 
 
@@ -58,7 +58,7 @@ private:
 		EEquipCompletionLogic UnequipLogic;
 	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping", meta = (EditCondition = "UnEquipLogic == EEquipCompletionLogic::Delayed"))
 		float UnequipDelay = 3.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping", meta = (EditInline, AdvancedDisplay))
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Equipping/Unequipping|Unequipping", meta = (AdvancedDisplay))
 		TArray<class UItemEvent*> OnUnequipEvents;
 
 

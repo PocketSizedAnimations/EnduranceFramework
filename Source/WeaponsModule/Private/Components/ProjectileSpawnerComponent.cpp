@@ -109,6 +109,20 @@ void UProjectileSpawnerComponent::PerformFire()
 	bFiring = true;
 }
 
+void UProjectileSpawnerComponent::PerformShot()
+{
+	/*projecitle based*/
+	if (ProjectileType == EProjectileType::Projectile)
+	{
+		
+	}
+	/*insta-hit tracing*/
+	else if (ProjectileType == EProjectileType::Instahit)
+	{
+
+	}
+}
+
 
 /*OnRep_FiringStateChanged() - called whenever bFiring changes - allows remote-clients to initiate the simulation with low overhead*/
 void UProjectileSpawnerComponent::OnRep_FiringStateChanged()

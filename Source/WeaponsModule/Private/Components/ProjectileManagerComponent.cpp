@@ -6,6 +6,10 @@
 // Sets default values for this component's properties
 UProjectileManagerComponent::UProjectileManagerComponent()
 {
+	ProjectileCollisionParams.bTraceComplex = true;
+	ProjectileCollisionParams.bReturnPhysicalMaterial = true;
+	ProjectileCollisionParams.bReturnFaceIndex = true;
+
 
 	/*ticking*/
 	PrimaryComponentTick.bCanEverTick = true;
@@ -23,5 +27,30 @@ void UProjectileManagerComponent::BeginPlay()
 void UProjectileManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+	
+	/*process each projectile*/
+	for (auto Projectile : Projectiles)	
+	{
+		ProcessProjectileMovement(Projectile);
+		if (Projectile.bProjectileHit)
+			ProcessProjectileHit(Projectile);
+	}
+
+}
+
+void UProjectileManagerComponent::SpawnProjectile(FProjectile NewProjectile)
+{
+
+}
+
+void UProjectileManagerComponent::ProcessProjectileMovement(FProjectile& Projectile)
+{
+
+}
+
+void UProjectileManagerComponent::ProcessProjectileHit(FProjectile& Projectile)
+{
+
 }
 

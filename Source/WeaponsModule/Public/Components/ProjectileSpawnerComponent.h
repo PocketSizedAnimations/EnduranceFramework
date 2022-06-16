@@ -102,6 +102,8 @@ protected:
 	/*performs the actual firing logic*/
 	UFUNCTION()
 		virtual void PerformFire();
+	UFUNCTION()
+		virtual void PerformShot();
 
 protected:
 	UFUNCTION()

@@ -18,7 +18,20 @@ UFirstPersonViewComponent::UFirstPersonViewComponent(const FObjectInitializer& O
 
 void UFirstPersonViewComponent::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {	
+	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UFirstPersonViewComponent, ViewHeight))
+	{
+		SyncPawnEyeHeight();
+	}
+
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+
+void UFirstPersonViewComponent::PostInitProperties()
+{
+	SyncPawnEyeHeight();
+	Super::PostInitProperties();
 }
 
 
@@ -31,6 +44,7 @@ void UFirstPersonViewComponent::BeginPlay()
 	InitializeFirstPersonScene();
 	InitializeCameraComponent();
 	InitializeArmsMesh();
+	SyncPawnEyeHeight();
 }
 
 void UFirstPersonViewComponent::InitializeFirstPersonScene()
@@ -90,6 +104,14 @@ void UFirstPersonViewComponent::InitializeArmsMesh()
 		Arms->SetSkeletalMesh(ArmsMesh);
 		Arms->SetAnimClass(ArmsAnimationClass);
 		Arms->ResetAnimInstanceDynamics(ETeleportType::ResetPhysics);
+	}
+}
+
+void UFirstPersonViewComponent::SyncPawnEyeHeight()
+{
+	if (APawn* P = Cast<APawn>(GetOwner()))
+	{
+		P->BaseEyeHeight = ViewHeight;		
 	}
 }
 

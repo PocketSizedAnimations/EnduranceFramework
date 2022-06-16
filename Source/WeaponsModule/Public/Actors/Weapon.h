@@ -32,6 +32,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
+public:
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
+		virtual void BeginFire();
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+		virtual void EndFire();
+
+
 
 public:
 	UFUNCTION()

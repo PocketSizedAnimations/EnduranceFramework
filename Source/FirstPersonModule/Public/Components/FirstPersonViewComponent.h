@@ -46,6 +46,7 @@ public:
 	UFirstPersonViewComponent(const FObjectInitializer& ObjectInitializer);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostInitProperties() override;
 
 protected:
 	// Called when the game starts
@@ -56,6 +57,10 @@ protected:
 		virtual void InitializeCameraComponent();
 	UFUNCTION()
 		virtual void InitializeArmsMesh();
+
+	/*modifies the Pawn's BaseEyeHeight variable to match the FirstPersonView*/
+	UFUNCTION()
+		virtual void SyncPawnEyeHeight();
 
 public:	
 	// Called every frame

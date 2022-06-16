@@ -61,7 +61,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Equipping/Unequipping|Unequipping", meta = (AdvancedDisplay))
 		TArray<class UItemEvent*> OnUnequipEvents;
 
-
+	UPROPERTY(Replicated, ReplicatedUsing = "OnRep_CollisionChanged")
+		bool bCollisionEnabled = true;
 
 
 public:
@@ -99,6 +100,8 @@ private:
 		virtual void EnableCollision();
 	UFUNCTION()
 		virtual void DisableCollision();
+	UFUNCTION()
+		virtual void OnRep_CollisionChanged();
 	UFUNCTION()
 		virtual void EnableVisibility();
 	UFUNCTION()

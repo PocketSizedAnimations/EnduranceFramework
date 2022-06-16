@@ -5,6 +5,16 @@
 #include "Components/InventoryManagerComponent.h"
 #include "Events/ItemEvent.h"
 
+/*replication*/
+#include "Net/UnrealNetwork.h"
+
+void UInventoryItemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UInventoryItemComponent, bCollisionEnabled);
+}
+
 // Sets default values for this component's properties
 UInventoryItemComponent::UInventoryItemComponent()
 {
@@ -52,6 +62,9 @@ void UInventoryItemComponent::EnableCollision()
 	{
 		GetOwner()->SetActorEnableCollision(true);		
 	}
+
+	if(GetNetMode() < NM_Client)
+		bCollisionEnabled = true;
 }
 
 void UInventoryItemComponent::DisableCollision()
@@ -60,6 +73,17 @@ void UInventoryItemComponent::DisableCollision()
 	{
 		GetOwner()->SetActorEnableCollision(false);
 	}
+
+	if (GetNetMode() < NM_Client)
+		bCollisionEnabled = false;
+}
+
+void UInventoryItemComponent::OnRep_CollisionChanged()
+{
+	if (bCollisionEnabled)
+		EnableCollision();
+	else
+		DisableCollision();
 }
 
 void UInventoryItemComponent::EnableVisibility()

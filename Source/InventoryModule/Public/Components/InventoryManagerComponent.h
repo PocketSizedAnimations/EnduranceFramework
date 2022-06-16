@@ -19,7 +19,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		bool bCanEquipItems = false;
 	/*what's currently active for this manager*/
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		AActor* CurrentlyEquipped;
 private:
 	/*used to track an item that wants to be equipped but waiting on an action to complete*/
@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (MustImplement="InventoryItemInterface"))
 		TArray<TSubclassOf<AActor>> DefaultItems;
 protected:
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		TArray<AActor*> Inventory;
 
 
@@ -52,7 +52,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-
+	//=====================================
+	//==============INVENTORY==============
+	//=====================================
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 		virtual void SpawnInventoryFromTemplate(class UInventoryTemplate* InventoryTemplate, bool bClearExisting = true);
 	UFUNCTION()
@@ -61,6 +63,10 @@ protected:
 		virtual void SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting = true);
 	UFUNCTION()
 		virtual void ClearInventory();
+public:
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+		AActor* GetCurrentlyEquippedItem();
+
 
 
 	//=====================================

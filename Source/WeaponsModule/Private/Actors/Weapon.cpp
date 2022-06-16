@@ -25,6 +25,8 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 		//ItemComponent->OnEquipBegin.AddDynamic(this, &AWeapon::OnEquipBegin);
 	}
 
+	bReplicates = true;
+	NetPriority = 3.0f; //similar to PlayerController
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -41,6 +43,16 @@ void AWeapon::BeginPlay()
 void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void AWeapon::BeginFire()
+{
+
+}
+
+void AWeapon::EndFire()
+{
 
 }
 

@@ -7,6 +7,20 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/InventoryContainerWidget.h"
 
+/*replication*/
+#include "Net/UnrealNetwork.h"
+
+
+/*setup replication*/
+void UInventoryManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UInventoryManagerComponent, CurrentlyEquipped);
+	DOREPLIFETIME(UInventoryManagerComponent, Inventory);
+
+}
+
 // Sets default values for this component's properties
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
@@ -31,6 +45,10 @@ void UInventoryManagerComponent::BeginPlay()
 
 void UInventoryManagerComponent::SpawnInventoryFromTemplate(UInventoryTemplate* InventoryTemplate, bool bClearExisting)
 {
+	/*server-check*/
+	if (GetNetMode() == NM_Client)
+		return;
+
 	if (!InventoryTemplate)
 		return;
 
@@ -42,7 +60,7 @@ void UInventoryManagerComponent::SpawnInventoryFromTemplate(UInventoryTemplate* 
 
 void UInventoryManagerComponent::SpawnDefaultInventory()
 {
-	/*safety check*/
+	/*server check*/
 	if (GetNetMode() == NM_Client) 
 		return;
 
@@ -51,8 +69,8 @@ void UInventoryManagerComponent::SpawnDefaultInventory()
 
 void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting)
 {
-	/*server-check*/
-	if (GetOwner() == nullptr || GetOwner()->GetNetMode() == NM_Client)
+	/*safety/server-check*/
+	if (GetOwner() == nullptr || GetNetMode() == NM_Client)
 		return;
 	
 	/*destroy existing inventory*/
@@ -98,6 +116,11 @@ void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Item
 void UInventoryManagerComponent::ClearInventory()
 {
 
+}
+
+AActor* UInventoryManagerComponent::GetCurrentlyEquippedItem()
+{
+	return CurrentlyEquipped;
 }
 
 

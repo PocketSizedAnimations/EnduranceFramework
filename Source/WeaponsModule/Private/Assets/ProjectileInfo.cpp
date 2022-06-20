@@ -3,3 +3,8 @@
 
 #include "Assets/ProjectileInfo.h"
 
+
+float UProjectileInfo::GetDamage()
+{
+	return Damage;
+}

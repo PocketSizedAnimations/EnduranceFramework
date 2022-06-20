@@ -18,7 +18,6 @@ void UInventoryManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 
 	DOREPLIFETIME(UInventoryManagerComponent, CurrentlyEquipped);
 	DOREPLIFETIME(UInventoryManagerComponent, Inventory);
-
 }
 
 // Sets default values for this component's properties

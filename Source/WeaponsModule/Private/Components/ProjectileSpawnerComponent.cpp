@@ -2,6 +2,11 @@
 
 
 #include "Components/ProjectileSpawnerComponent.h"
+#include "Subsystem/ProjectileSubsystem.h"
+
+/*gamemodes*/
+#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameStateBase.h"
 
 /*replication*/
 #include "Net/UnrealNetwork.h"
@@ -104,17 +109,33 @@ bool UProjectileSpawnerComponent::IsFiring()
 */
 void UProjectileSpawnerComponent::PerformFire()
 {
-
 	/*perform actual firing*/
 	bFiring = true;
+
+	PerformShot();
 }
 
+/*creates a projectile or insta-hit trace based on info - 
+* don't call directly
+* should only be called from PerformFire()*/
 void UProjectileSpawnerComponent::PerformShot()
 {
 	/*projecitle based*/
 	if (ProjectileType == EProjectileType::Projectile)
 	{
-		
+		if (GetProjectileSubsystem())
+		{
+			/*generate new projectile data*/
+			FProjectile Projectile = FProjectile(ProjectileInfo, 
+					GetProjectileSpawnTransform().GetLocation(), 
+					GetProjectileSpawnTransform().GetRotation().GetForwardVector(), 
+					GetOwner(), 
+					GetOwningPawn(),
+					GetOwningPlayerController());
+
+			/*spawn projectile*/
+			GetProjectileSubsystem()->SpawnProjectile(Projectile);
+		}
 	}
 	/*insta-hit tracing*/
 	else if (ProjectileType == EProjectileType::Instahit)
@@ -260,4 +281,16 @@ FTransform UProjectileSpawnerComponent::GetSocketTransformFromOwner()
 	}
 
 	return FTransform();
+}
+
+
+
+
+UProjectileSubsystem* UProjectileSpawnerComponent::GetProjectileSubsystem()
+{
+	if (ProjectileSubsystem != nullptr)
+		return ProjectileSubsystem;
+
+	ProjectileSubsystem = GetWorld()->GetSubsystem<UProjectileSubsystem>();
+	return ProjectileSubsystem;
 }

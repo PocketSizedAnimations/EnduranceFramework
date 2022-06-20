@@ -49,6 +49,8 @@ private:
 
 	UPROPERTY()
 		APlayerController* PC;
+	UPROPERTY()
+		class UProjectileSubsystem* ProjectileSubsystem;
 
 										  
 	/*projectile setup*/
@@ -121,5 +123,9 @@ public:
 		bool IsLocallyControlled();
 	UFUNCTION(BlueprintPure)
 		virtual FTransform GetSocketTransformFromOwner();
+
+
+	UFUNCTION()
+		class UProjectileSubsystem* GetProjectileSubsystem();
 
 };

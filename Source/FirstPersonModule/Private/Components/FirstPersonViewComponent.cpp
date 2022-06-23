@@ -11,6 +11,7 @@
 UFirstPersonViewComponent::UFirstPersonViewComponent(const FObjectInitializer& ObjectInitializer)
 {
 	//ArmsAnimationClass = UFirstPersonArmsAnimInstance::StaticClass();
+	bWantsInitializeComponent = true;
 
 	bAutoActivate = true;
 	PrimaryComponentTick.bCanEverTick = true;
@@ -18,20 +19,32 @@ UFirstPersonViewComponent::UFirstPersonViewComponent(const FObjectInitializer& O
 
 void UFirstPersonViewComponent::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {	
-	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	/*FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(UFirstPersonViewComponent, ViewHeight))
 	{
 		SyncPawnEyeHeight();
-	}
+	}*/
 
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 
 void UFirstPersonViewComponent::PostInitProperties()
-{
-	SyncPawnEyeHeight();
+{	
 	Super::PostInitProperties();
+	SyncPawnEyeHeight();
+}
+
+void UFirstPersonViewComponent::InitializeComponent()
+{
+	/*all clients run setup*/
+	InitializeFirstPersonScene();
+	InitializeCameraComponent();
+	InitializeArmsMesh();
+	SyncPawnEyeHeight();
+
+	Super::InitializeComponent();
+
 }
 
 
@@ -40,11 +53,7 @@ void UFirstPersonViewComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*all clients run setup*/
-	InitializeFirstPersonScene();
-	InitializeCameraComponent();
-	InitializeArmsMesh();
-	SyncPawnEyeHeight();
+
 }
 
 void UFirstPersonViewComponent::InitializeFirstPersonScene()
@@ -89,7 +98,7 @@ void UFirstPersonViewComponent::InitializeArmsMesh()
 		return;
 
 	/*create arms*/
-	Arms = NewObject<UFirstPersonArmsComponent>(GetOwner(), FName("FirstPersonArms"), RF_Transient);
+	Arms = NewObject<UFirstPersonArmsComponent>(GetOwner(), ArmsMeshName, RF_Transient);
 	if (Arms)
 	{
 		/*initialize*/
@@ -102,8 +111,11 @@ void UFirstPersonViewComponent::InitializeArmsMesh()
 
 		/*initialize visuals*/
 		Arms->SetSkeletalMesh(ArmsMesh);
-		Arms->SetAnimClass(ArmsAnimationClass);
+		Arms->SetAnimClass(AnimationBlueprint);
 		Arms->ResetAnimInstanceDynamics(ETeleportType::ResetPhysics);
+
+		/*ensure we hide this from anyone but the owning player*/
+		Arms->SetOnlyOwnerSee(true);
 	}
 }
 

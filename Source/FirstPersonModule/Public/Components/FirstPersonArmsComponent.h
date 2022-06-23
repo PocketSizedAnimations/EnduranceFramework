@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(ClassGroup=(FirstPerson), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(FirstPerson))
 class FIRSTPERSONMODULE_API UFirstPersonArmsComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()

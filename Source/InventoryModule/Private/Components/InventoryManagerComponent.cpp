@@ -7,6 +7,9 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/InventoryContainerWidget.h"
 
+/*logging*/
+#include "Logging.h"
+
 /*replication*/
 #include "Net/UnrealNetwork.h"
 
@@ -23,6 +26,8 @@ void UInventoryManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 // Sets default values for this component's properties
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
+	bCanEquipItems = true;
+
 	/*replication*/
 	SetIsReplicatedByDefault(true);	
 
@@ -133,7 +138,20 @@ void UInventoryManagerComponent::Equip(AActor* Item)
 
 	/*validation check*/
 	if (!bCanEquipItems || Item == nullptr)
+	{
+		#if WITH_EDITOR
+			if (bCanEquipItems == false)
+			{
+				UE_LOG(LogInventoryModule, Warning, TEXT("!!!%s::Equip() called but InventoryManager has bCanEquipItems set false!!!"), *GetName());
+			}
+			else if (Item == nullptr)
+			{
+				UE_LOG(LogInventoryModule, Warning, TEXT("!!!%s::Equip() called but item is null!"), *GetName());
+			}
+		#endif
+
 		return;
+	}		
 	
 	/*ensure-registration is complete*/
 	RegisterItem(Item);

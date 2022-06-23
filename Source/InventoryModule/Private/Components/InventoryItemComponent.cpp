@@ -54,6 +54,9 @@ void UInventoryItemComponent::EndEquip()
 		if (Event != nullptr && Event->bEnabled)
 			Event->OnItemEventActivated(GetOwner(), GetOwner()->GetOwner(), InventoryManager);
 	}
+
+	if(OnEquipEnd.IsBound())
+		OnEquipEnd.Broadcast(GetOwner(), this, GetInventoryManager(), GetOwner()->GetOwner());
 }
 
 void UInventoryItemComponent::EnableCollision()

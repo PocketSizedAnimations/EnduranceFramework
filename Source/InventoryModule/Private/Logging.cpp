@@ -2,4 +2,4 @@
 
 #include "Logging.h"
 
-DEFINE_LOG_CATEGORY(InventoryModule);
+DEFINE_LOG_CATEGORY(LogInventoryModule);

@@ -55,12 +55,15 @@ protected:
 	//=====================================
 	//==============INVENTORY==============
 	//=====================================
+public:
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 		virtual void SpawnInventoryFromTemplate(class UInventoryTemplate* InventoryTemplate, bool bClearExisting = true);
+protected:
 	UFUNCTION()
 		virtual void SpawnDefaultInventory();
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 		virtual void SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting = true);
+public:
 	UFUNCTION()
 		virtual void ClearInventory();
 public:

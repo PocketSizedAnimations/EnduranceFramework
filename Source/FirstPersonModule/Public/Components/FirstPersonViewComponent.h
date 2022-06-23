@@ -33,8 +33,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category = "Arms")
 		USkeletalMesh* ArmsMesh;
+	UPROPERTY(VisibleANywhere, Category = "Arms")
+		FName ArmsMeshName = "FirstPersonArms";
 	UPROPERTY(EditDefaultsOnly, Category = "Arms")
-		TSubclassOf<class UFirstPersonArmsAnimInstance> ArmsAnimationClass;
+		TSubclassOf<class UFirstPersonArmsAnimInstance> AnimationBlueprint;
 	UPROPERTY(EditDefaultsOnly, Category = "Arms")
 		FVector ArmsOffset;
 
@@ -49,6 +51,8 @@ public:
 	virtual void PostInitProperties() override;
 
 protected:
+	virtual void InitializeComponent() override;
+
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	UFUNCTION()
@@ -65,5 +69,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintPure, Category = "Mesh")
+		UFirstPersonArmsComponent* GetArmsMeshComponent() {return Arms;};
 		
 };

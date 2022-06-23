@@ -7,7 +7,7 @@
 #include "FirstPersonSceneComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom))
 class FIRSTPERSONMODULE_API UFirstPersonSceneComponent : public USceneComponent
 {
 	GENERATED_BODY()

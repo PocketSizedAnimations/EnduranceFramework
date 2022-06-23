@@ -13,7 +13,7 @@ class WEAPONSMODULE_API AWeapon : public AActor, public IInventoryItemInterface
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		USkeletalMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

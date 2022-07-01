@@ -19,10 +19,8 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer)
 	ItemComponent = ObjectInitializer.CreateDefaultSubobject<UInventoryItemComponent>(this, TEXT("ItemComp"));
 	AddOwnedComponent(ItemComponent);
 	if (ItemComponent)
-	{
-		
-		//ItemComponent->RegisterComponent();
-		//ItemComponent->OnEquipBegin.AddDynamic(this, &AWeapon::OnEquipBegin);
+	{	
+		ItemComponent->OnEquipBegin.AddDynamic(this, &AWeapon::OnEquipBegin);
 	}
 
 	bReplicates = true;

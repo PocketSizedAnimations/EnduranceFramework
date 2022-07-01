@@ -15,9 +15,10 @@ class INVENTORYMODULE_API UInventoryManagerComponent : public UActorComponent
 	GENERATED_BODY()
 public:
 
-protected:
+
 	UPROPERTY(EditDefaultsOnly)
 		bool bCanEquipItems = false;
+protected:
 	/*what's currently active for this manager*/
 	UPROPERTY(Replicated)
 		AActor* CurrentlyEquipped;

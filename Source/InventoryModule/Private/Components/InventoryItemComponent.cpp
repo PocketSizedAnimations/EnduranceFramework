@@ -41,6 +41,8 @@ void UInventoryItemComponent::BeginEquip()
 	if (EquipLogic == EEquipCompletionLogic::Instant)
 		EndEquip();
 
+	if (OnEquipBegin.IsBound())
+		OnEquipBegin.Broadcast(GetOwner(), this, GetInventoryManager(), GetOwner()->GetOwner());
 	//else if(EquipLogic == EEquipCompletionLogic::Delayed)
 }
 

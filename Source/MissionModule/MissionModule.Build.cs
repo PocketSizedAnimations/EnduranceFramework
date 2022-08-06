@@ -38,7 +38,7 @@ public class MissionModule : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-				"Engine"
+				"Engine",
 			}
 			);
 		
@@ -49,5 +49,10 @@ public class MissionModule : ModuleRules
 				
 			}
 			);
+
+		if(Target.bBuildEditor)
+        {
+			PrivateDependencyModuleNames.Add("UnrealEd");
+        }
 	}
 }

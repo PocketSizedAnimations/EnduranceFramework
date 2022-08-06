@@ -49,6 +49,8 @@ public class MissionEditorModule : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"AssetTools",
+				"Kismet"
 			}
 			);
 		

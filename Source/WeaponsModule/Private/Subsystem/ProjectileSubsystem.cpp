@@ -3,6 +3,7 @@
 
 #include "Subsystem/ProjectileSubsystem.h"
 #include "DrawDebugHelpers.h"
+#include "WeaponsModule.h"
 
 // Sets default values for this component's properties
 UProjectileSubsystem::UProjectileSubsystem()
@@ -44,6 +45,8 @@ TStatId UProjectileSubsystem::GetStatId() const
 
 void UProjectileSubsystem::SpawnProjectile(FProjectile& NewProjectile)
 {
+	UE_LOG(LogTemp, Log, TEXT("%s SpawnProjectile"), NETMODE_WORLD);
+
 	Projectiles.Add(NewProjectile);
 }
 

@@ -3,12 +3,27 @@
 #include "MissionEditorModule.h"
 #include "Logging.h"
 
+/*module management*/
 #include "Modules/ModuleManager.h"
+
+/*mission module*/
 #include "..\Public\MissionEditorModule.h"
 #include "Commands/MissionEditorCommands.h"
+#include "Assets/AssetTypeActions_Objective.h"
+
+/*editor*/
 #include "LevelEditor.h"
+
+/*editor assets (UAssets)*/
+#include "IAssetTools.h"
+#include "AssetToolsModule.h"
+
+/*slate*/
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Text/STextBlock.h"
+
+
+
 
 
 
@@ -28,6 +43,27 @@ void FMissionEditorModule::StartupModule()
 	/*add it to the Toolbar Extension Manager - which will be picked up later and injected when the Toolbar is created*/
 	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor"); //loads the LevelEditorModule
 	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(MissionToolbarExtender); //push our toolbar into the extension of LevelEditorModule
+
+
+	/*add asset-registry*/	
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+
+	AssetCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("MissionEditorModule")), LOCTEXT("MissionModuleCategory", "Missions"));
+	AssetTools.RegisterAssetTypeActions(MakeShareable(new FAssetTypeActions_Objective(AssetCategory)));
+
+
+	/*add UObjective to its own category*/
+	//AssetCategoryBit = AssetToolsModule.RegisterAdvancedAssetCategory(FName(TEXT("Mission")), LOCTEXT("MissionAssetCategory", "Mission")); //the AssetToolModule will auto-assign an ID - we just want to store that ID
+	//{
+	//	auto Action = MakeShared<FAssetTypeActions_Objective>(AssetCategoryBit);
+	//	AssetToolsModule.RegisterAssetTypeActions(Action);
+	//	//RegisterAssetTypeActions
+
+	//}
+	//TSharedPtr<FAssetTypeActions_Objective> AssetTypeAction = MakeShareable(new FAssetTypeActions_Objective(AssetCategoryBit)); //Create a Shared Pointer using our custom UAsset
+	
+
+
 }
 
 void FMissionEditorModule::ShutdownModule()

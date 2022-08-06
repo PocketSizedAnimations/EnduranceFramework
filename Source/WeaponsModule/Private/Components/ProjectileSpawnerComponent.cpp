@@ -3,6 +3,7 @@
 
 #include "Components/ProjectileSpawnerComponent.h"
 #include "Subsystem/ProjectileSubsystem.h"
+#include "WeaponsModule.h"
 
 /*gamemodes*/
 #include "GameFramework/GameModeBase.h"
@@ -53,10 +54,13 @@ void UProjectileSpawnerComponent::TickComponent(float DeltaTime, ELevelTick Tick
 
 void UProjectileSpawnerComponent::BeginFire()
 {
-	/*already-firing check*/
-	if (IsFiring())
-		return;
+	UE_LOG(LogTemp, Warning, TEXT("%s BeginFire()"), NETMODE_WORLD);
 	
+	/*already-firing check*/
+	/*if (IsFiring())
+		return;
+	*/
+
 	/*owning client? - notify server*/
 	if (GetNetMode() == NM_Client && IsLocallyControlled())
 		ServerNotify_BeginFire();
@@ -109,6 +113,7 @@ bool UProjectileSpawnerComponent::IsFiring()
 */
 void UProjectileSpawnerComponent::PerformFire()
 {
+	UE_LOG(LogTemp, Log, TEXT("%s PerformFire()"), NETMODE_WORLD);
 	/*perform actual firing*/
 	bFiring = true;
 
@@ -120,11 +125,17 @@ void UProjectileSpawnerComponent::PerformFire()
 * should only be called from PerformFire()*/
 void UProjectileSpawnerComponent::PerformShot()
 {
+	UE_LOG(LogTemp, Log, TEXT("%s PerformShot()"), NETMODE_WORLD);
+
 	/*projecitle based*/
 	if (ProjectileType == EProjectileType::Projectile)
 	{
+		UE_LOG(LogTemp, Log, TEXT("%s ProjectileType == Projectile"), NETMODE_WORLD);
+
 		if (GetProjectileSubsystem())
 		{
+			UE_LOG(LogTemp, Log, TEXT("%s spawning projectile....."), NETMODE_WORLD);
+
 			/*generate new projectile data*/
 			FProjectile Projectile = FProjectile(ProjectileInfo, 
 					GetProjectileSpawnTransform().GetLocation(), 
@@ -148,6 +159,8 @@ void UProjectileSpawnerComponent::PerformShot()
 /*OnRep_FiringStateChanged() - called whenever bFiring changes - allows remote-clients to initiate the simulation with low overhead*/
 void UProjectileSpawnerComponent::OnRep_FiringStateChanged()
 {
+	UE_LOG(LogTemp, Warning, TEXT("%s OnRep_FiringStateChanged() - bFiring == %s"), NETMODE_WORLD, bFiring ? TEXT("TRUE") : TEXT("FALSE"));
+
 	if (bFiring)
 		BeginFire();
 	else

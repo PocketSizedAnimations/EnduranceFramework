@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Subsystems/ExtendedAISubsystem.h"
 #include "StimuliComponent.generated.h"
 
 /*component that automatically produces reactions to SensesComponent to reprepsent vision and hearing events*/
@@ -40,4 +41,11 @@ public:
 
 	
 	virtual bool ProvidesVisualStimuli();
+
+
+
+
+
+	UFUNCTION()
+		class UExtendedAISubsystem* GetAISubsystem() { return GetWorld()->GetSubsystem<UExtendedAISubsystem>(); }
 };

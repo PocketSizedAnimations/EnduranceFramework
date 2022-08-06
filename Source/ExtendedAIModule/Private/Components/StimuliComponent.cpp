@@ -3,7 +3,6 @@
 
 #include "Components/StimuliComponent.h"
 #include "GameFramework/GameModeBase.h"
-#include "AIManagerComponent.h"
 
 UStimuliComponent::UStimuliComponent()
 {
@@ -19,11 +18,10 @@ void UStimuliComponent::BeginPlay()
 	/*server-initiation*/
 	if (GetOwner() && GetNetMode() < NM_Client)
 	{
-		UAIManagerComponent* AIManager = Cast<UAIManagerComponent>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UAIManagerComponent::StaticClass()));
-		if (AIManager)
-		{
-			AIManager->RegisterStimuliComponent(this);
-		}
+		
+		if (GetAISubsystem())
+			GetAISubsystem()->RegisterStimuliComponent(this);
+
 	}	
 }
 

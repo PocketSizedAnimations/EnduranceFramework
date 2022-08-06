@@ -37,7 +37,7 @@ enum class EHealthState : uint8
 };
 
 
-UCLASS( ClassGroup=(Health), meta=(BlueprintSpawnableComponent), HideCategories=(Sockets,ComponentTick,ComponentReplication,Activation,Cooking,AssetUserData,Collision) )
+UCLASS( ClassGroup=(Health), DisplayName="Health Component", meta = (BlueprintSpawnableComponent), HideCategories = (Sockets, ComponentTick, ComponentReplication, Activation, Cooking, AssetUserData, Collision))
 class HEALTHANDSTAMINAMODULE_API USimpleHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -46,10 +46,23 @@ public:
 private:
 	UPROPERTY(Replicated, EditAnywhere, Category = "Health", meta = (ClampUIMin=0,ClampMin=0))
 		float Health;
-	UPROPERTY(EditAnywhere, Category = "Health", meta = (ClampUIMin=0,ClampMin=0))
+	UPROPERTY(Replicated, EditAnywhere, Category = "Health", meta = (ClampUIMin=0,ClampMin=0))
 		float MaxHealth = 100.0f;
 	UPROPERTY(Replicated)
 		EHealthState Status;
+
+
+	/*stamina*/
+private:
+	UPROPERTY(Replicated, EditAnywhere, Category = "Stamina", meta = (ClampUIMin = 0, ClampMin = 0))
+		float Stamina;
+	UPROPERTY(Replicated, EditAnywhere, Category = "Stamina", meta = (ClampUIMin = 0, ClampMin = 0))
+		float MaxStamina;
+
+	/*hunger*/
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
+		bool bEnableHunger;
 
 protected:
 	/*death*/

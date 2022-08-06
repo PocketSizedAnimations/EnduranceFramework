@@ -28,7 +28,7 @@ public class ExtendedAIModule : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core"
+				"Core",
 			}
 			);
 			
@@ -38,7 +38,9 @@ public class ExtendedAIModule : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-				"Engine"
+				"Engine",
+				"AIModule",
+				"GameplayTasks"
 			}
 			);
 		

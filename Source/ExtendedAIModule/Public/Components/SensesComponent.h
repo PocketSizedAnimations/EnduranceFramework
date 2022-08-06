@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Subsystems/ExtendedAISubsystem.h"
 #include "SensesComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActorSpotted, AActor*, Receptor, AActor*, SeenActor);
@@ -39,6 +40,8 @@ public:
 UCLASS( ClassGroup=(ArtificialIntelligence), meta = (BlueprintSpawnableComponent), HideCategories=(Activation, "Components|Activation", Collision))
 class EXTENDEDAIMODULE_API USensesComponent : public UActorComponent
 {
+	friend class UBTDecorator_HasVision;
+
 	GENERATED_BODY()
 public:
 
@@ -49,20 +52,25 @@ protected:
 
 protected:
 	/*AI-Manager*/
-	UPROPERTY()
-		class UAIManagerComponent* AIManager = nullptr;
+	//UPROPERTY()
+	//	class UAIManagerComponent* AIManager = nullptr;
 
-	/*vision*/
+	/*enable/disable vision updates*/
 	UPROPERTY(EditAnywhere, Category = "Vision")
 		bool bHasVision = true;
 	UPROPERTY(EditAnywhere, Category = "Vision", meta=(EditCondition="bHasVision"))
 		bool bShowVisionDebug = false;
+	/*distance (how far away) we can see things*/
 	UPROPERTY(EditAnywhere, Category = "Vision", meta = (EditCondition = "bHasVision"))
 		float VisionDistance = 2400.0f;
+	/*angle (width) of visual ability*/
 	UPROPERTY(EditAnywhere, Category = "Vision", meta = (EditCondition = "bHasVision"))
 		float VisionConeAngle = 80.0f;
+	/*how long a stimuli must stay within this characters vision for it to "spot" it*/
+	UPROPERTY(EditAnywhere, Category = "Vision", meta = (EditCondition = "bHasVision"))
+		float VisualSpotDelay = .7f; 
 	/*time between vision updates - lower is faster but less performant*/
-	UPROPERTY(EditAnywhere, Category = "Vision", meta = (EditCondition = "bHasVision", UIMin=0.05f,ClampMin=0.05f))
+	UPROPERTY(EditAnywhere, Category = "Vision|Advanced", meta = (EditCondition = "bHasVision", UIMin=0.05f,ClampMin=0.05f))
 		float VisionUpdateInterval = 0.15f;
 
 	FTimerHandle VisionUpdateHandler;
@@ -99,6 +107,8 @@ public:
 		virtual void DetectActor(AActor* Actor);
 	UFUNCTION(BlueprintCallable)
 		virtual bool HasDetected(AActor* Actor);
+	UFUNCTION(BlueprintPure)
+		virtual bool HasDetectedAnyActors();
 	UFUNCTION(BlueprintCallable)
 		virtual void LoseActor(AActor* Actor);
 
@@ -117,4 +127,10 @@ protected:
 		bool IsWithinSightDistance(AActor* Actor);
 	UFUNCTION(Blueprintcallable)
 		bool IsWithinVisionCone(AActor* Actor);
+
+
+
+
+	UFUNCTION()
+		class UExtendedAISubsystem* GetAISubsystem() { return GetWorld()->GetSubsystem<UExtendedAISubsystem>(); }
 };

@@ -3,7 +3,6 @@
 
 #include "Components/SensesComponent.h"
 #include "GameFramework/GameModeBase.h"
-#include "AIManagerComponent.h"
 #include "Components/StimuliComponent.h"
 
 USensesComponent::USensesComponent()
@@ -23,11 +22,8 @@ void USensesComponent::BeginPlay()
 		if (bHasVision)
 			GetOwner()->GetWorldTimerManager().SetTimer(VisionUpdateHandler, this, &USensesComponent::OnVisionUpdate, VisionUpdateInterval, true);
 	
-		AIManager = Cast<UAIManagerComponent>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UAIManagerComponent::StaticClass()));
-		if (AIManager)
-		{
-			AIManager->RegisterSensesComponent(this);
-		}		
+		if (GetAISubsystem())
+			GetAISubsystem()->RegisterSensesComponent(this);
 	}
 }
 
@@ -85,6 +81,20 @@ bool USensesComponent::HasDetected(AActor* Actor)
 	return false;
 }
 
+bool USensesComponent::HasDetectedAnyActors()
+{
+	if (DetectedActors.Num() <= 0)
+		return false;
+
+	for (auto& Detected : DetectedActors)
+	{
+		if (Detected.DetectionState == EActorDetectionState::Detected)
+			return true;
+	}
+
+	return false;
+}
+
 void USensesComponent::LoseActor(AActor* Actor)
 {
 	for (auto& Detected : DetectedActors)
@@ -103,10 +113,10 @@ void USensesComponent::LoseActor(AActor* Actor)
 //==========================
 void USensesComponent::OnVisionUpdate()
 {
-	if (AIManager && bHasVision)
+	if (GetAISubsystem() && bHasVision)
 	{
 		/*loop through all visual stimuli sources*/
-		for (auto VisualStimuli : AIManager->GetAllVisualStimuliComponents())
+		for (auto VisualStimuli : GetAISubsystem()->GetAllVisualStimuliComponents())
 		{
 			/*if we can currently see this stimuli*/
 			if (CanSee(VisualStimuli->GetOwner()))

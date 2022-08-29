@@ -26,6 +26,7 @@ void UInventoryManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 // Sets default values for this component's properties
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
+	Quickslots.Init(nullptr, 11);
 	bCanEquipItems = true;
 
 	/*replication*/
@@ -194,11 +195,21 @@ void UInventoryManagerComponent::OnEquipFinished(AActor* Item)
 
 void UInventoryManagerComponent::Unequip(AActor* Item)
 {
+	/*safetry check*/
+	if (Item == nullptr)
+		return;
 
+	if (UInventoryItemComponent* ItemComp = GetItemComponent(Item))
+	{
+		ItemComp->BeginUnequip();
+	}
 }
 
 void UInventoryManagerComponent::OnUnequipFinished(AActor* Item)
 {		
+	CurrentlyEquipped = nullptr;
+
+	/*if we're waiting to equip anything - go ahead*/
 	if (PendingEquip)
 	{			
 		Equip(PendingEquip);
@@ -217,6 +228,26 @@ bool UInventoryManagerComponent::ShouldAutoEquip(AActor* Item)
 	}
 	
 	return false;
+}
+
+void UInventoryManagerComponent::AssignToQuickslot(AActor* ActorToAssign, EQuickslot Quickslot)
+{
+	/*safety check*/
+	if (ActorToAssign == nullptr)
+		return;
+
+	Quickslots[(uint8)Quickslot] = ActorToAssign;
+}
+
+void UInventoryManagerComponent::EquipQuickslot(EQuickslot Quickslot)
+{
+	if (Quickslots[(uint8)Quickslot] != nullptr)
+		Equip(Quickslots[(uint8)Quickslot]);
+}
+
+AActor* UInventoryManagerComponent::GetQuickslotItem(EQuickslot Quickslot)
+{
+	return Quickslots[(uint8)Quickslot];	
 }
 
 
@@ -308,9 +339,10 @@ void UInventoryManagerComponent::RegisterItem(AActor* Item)
 
 UInventoryItemComponent* UInventoryManagerComponent::GetItemComponent(AActor* Item)
 {
-	UInventoryItemComponent* ReturnItem = Cast<UInventoryItemComponent>(Item->GetComponentByClass(UInventoryItemComponent::StaticClass()));
+	if (!Item)
+		return nullptr;
 
-	return ReturnItem;
+	return Cast<UInventoryItemComponent>(Item->GetComponentByClass(UInventoryItemComponent::StaticClass()));	
 }
 
 

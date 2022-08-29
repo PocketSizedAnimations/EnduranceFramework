@@ -5,8 +5,12 @@
 #include "Components/InventoryManagerComponent.h"
 #include "Events/ItemEvent.h"
 
+
 /*replication*/
 #include "Net/UnrealNetwork.h"
+
+/*utilities*/
+#include "TimerManager.h"
 
 void UInventoryItemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -40,6 +44,8 @@ void UInventoryItemComponent::BeginEquip()
 	
 	if (EquipLogic == EEquipCompletionLogic::Instant)
 		EndEquip();
+	else if (EquipLogic == EEquipCompletionLogic::Delayed)
+		GetOwner()->GetWorldTimerManager().SetTimer(EquipHandler, this, &UInventoryItemComponent::EndEquip, EquipDelay, false);
 
 	if (OnEquipBegin.IsBound())
 		OnEquipBegin.Broadcast(GetOwner(), this, GetInventoryManager(), GetOwner()->GetOwner());
@@ -59,6 +65,35 @@ void UInventoryItemComponent::EndEquip()
 
 	if(OnEquipEnd.IsBound())
 		OnEquipEnd.Broadcast(GetOwner(), this, GetInventoryManager(), GetOwner()->GetOwner());
+}
+
+void UInventoryItemComponent::BeginUnequip()
+{
+	EquipState = EEquipState::Unequipping;
+
+	if (UnequipLogic == EEquipCompletionLogic::Instant)
+		EndUnequip();
+	else if(UnequipLogic == EEquipCompletionLogic::Delayed)
+		GetOwner()->GetWorldTimerManager().SetTimer(UnequipHandler, this, &UInventoryItemComponent::EndUnequip, UnequipDelay, false);
+
+	if (OnUnequipBegin.IsBound())
+		OnUnequipBegin.Broadcast(GetOwner(), this, GetInventoryManager(), GetOwner()->GetOwner());
+}
+
+void UInventoryItemComponent::EndUnequip()
+{
+	EquipState = EEquipState::InStorage;
+	InventoryManager->OnUnequipFinished(GetOwner());
+
+	for (auto Event : OnUnequipEvents)
+	{
+		if(Event != nullptr && Event->bEnabled)
+			Event->OnItemEventActivated(GetOwner(), GetOwner()->GetOwner(), InventoryManager);
+	}
+
+	if(OnUnequipEnd.IsBound())
+		OnUnequipEnd.Broadcast(GetOwner(), this, GetInventoryManager(), GetOwner()->GetOwner());
+
 }
 
 void UInventoryItemComponent::EnableCollision()

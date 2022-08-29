@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ElectronicDevice.generated.h"
 
+//******************DEPRECIATED - USE EQUIPMENT AS BASE CLASS INSTEAD****************
+
 UCLASS(abstract)
 class EQUIPMENTMODULE_API AElectronicDevice : public AActor
 {

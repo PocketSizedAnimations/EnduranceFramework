@@ -3,9 +3,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class EquipmentModule : ModuleRules
+public class ExtendedFirstPersonModule : ModuleRules
 {
-	public EquipmentModule(ReadOnlyTargetRules Target) : base(Target)
+	public ExtendedFirstPersonModule(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -29,7 +29,6 @@ public class EquipmentModule : ModuleRules
 			new string[]
 			{
 				"Core"
-				
 			}
 			);
 			
@@ -40,9 +39,8 @@ public class EquipmentModule : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Engine",
-				"UMG",
-				"Synthesis",
-				"InventoryModule"
+				"InventoryModule",
+				"WeaponsModule"
 			}
 			);
 		

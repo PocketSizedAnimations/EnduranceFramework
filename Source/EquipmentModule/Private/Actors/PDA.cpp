@@ -5,6 +5,7 @@
 #include "Components/WidgetComponent.h"
 
 APDA::APDA(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
 {
 	
 	

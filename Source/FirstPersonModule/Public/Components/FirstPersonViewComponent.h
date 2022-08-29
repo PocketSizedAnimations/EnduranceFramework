@@ -33,7 +33,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category = "Arms")
 		USkeletalMesh* ArmsMesh;
-	UPROPERTY(VisibleANywhere, Category = "Arms")
+	UPROPERTY(VisibleAnywhere, Category = "Arms")
 		FName ArmsMeshName = "FirstPersonArms";
 	UPROPERTY(EditDefaultsOnly, Category = "Arms")
 		TSubclassOf<class UFirstPersonArmsAnimInstance> AnimationBlueprint;
@@ -73,4 +73,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Mesh")
 		UFirstPersonArmsComponent* GetArmsMeshComponent() {return Arms;};
 		
+
+
 };

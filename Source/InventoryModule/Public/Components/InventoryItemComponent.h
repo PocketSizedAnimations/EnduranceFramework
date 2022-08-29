@@ -9,7 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnInventorySpawned, AActor*, Item, UInventoryItemComponent*, ItemComponent, UInventoryManagerComponent*, InventoryManager, AActor*, OwningActor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnEquipped, AActor*, Item, UInventoryItemComponent*, ItemComponent, UInventoryManagerComponent*, InventoryManager, AActor*, OwningActor);
 
-UENUM()
+UENUM(BlueprintType)
 enum class EEquipCompletionLogic : uint8
 {
 	Instant,
@@ -17,7 +17,7 @@ enum class EEquipCompletionLogic : uint8
 	WaitForNotification
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EEquipState : uint8 {
 	NONE,
 	InStorage,
@@ -46,6 +46,7 @@ private:
 	UPROPERTY()
 		EEquipState EquipState = EEquipState::NONE;
 	
+	FTimerHandle EquipHandler;
 	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping")
 		EEquipCompletionLogic EquipLogic;
 	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Equipping", meta = (EditCondition = "EquipLogic == EEquipCompletionLogic::Delayed"))
@@ -53,7 +54,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Equipping/Unequipping|Equipping", meta = (AdvancedDisplay))
 		TArray<class UItemEvent*> OnEquipEvents;
 
-
+	FTimerHandle UnequipHandler;
 	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping")
 		EEquipCompletionLogic UnequipLogic;
 	UPROPERTY(EditDefaultsOnly, Category = "Equipping/Unequipping|Unequipping", meta = (EditCondition = "UnEquipLogic == EEquipCompletionLogic::Delayed"))
@@ -77,6 +78,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FOnEquipped OnUnequipEnd;
 
+	//===========================================================================================================================================================
+	//=========================================================================FUNCTIONS=========================================================================
+	//===========================================================================================================================================================
+
 public:	
 	// Sets default values for this component's properties
 	UInventoryItemComponent();
@@ -85,11 +90,19 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+public:
+	UFUNCTION(BlueprintPure, Category = "State")
+		EEquipState GetEquipState() { return EquipState; };
+
 private:
 	UFUNCTION()
 		virtual void BeginEquip();
 	UFUNCTION()
 		virtual void EndEquip();
+	UFUNCTION()
+		virtual void BeginUnequip();
+	UFUNCTION()
+		virtual void EndUnequip();
 
 public:
 	UFUNCTION(BlueprintPure)

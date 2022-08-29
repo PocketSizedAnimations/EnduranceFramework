@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/ElectronicDevice.h"
+#include "Actors/Equipment.h"
 #include "PDA.generated.h"
 
 /**
  * 
  */
 UCLASS(abstract)
-class EQUIPMENTMODULE_API APDA : public AElectronicDevice
+class EQUIPMENTMODULE_API APDA : public AEquipment
 {
 	GENERATED_BODY()
 public:

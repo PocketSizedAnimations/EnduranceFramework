@@ -107,6 +107,14 @@
 			"AdditionalDependencies": [
 				"Engine"
 			]
+		},
+		{
+			"Name": "ExtendedFirstPersonModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"FirstPersonModule"
+			]
 		}
 	],
 	"Plugins": [

@@ -6,6 +6,21 @@
 #include "Components/ActorComponent.h"
 #include "InventoryManagerComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EQuickslot : uint8
+{
+	Quickslot1,
+	Quickslot2,
+	Quickslot3,
+	Quickslot4,
+	Quickslot5,
+	Quickslot6,
+	Quickslot7,
+	Quickslot8,
+	Quickslot9,
+	Quickslot10
+};
+
 
 UCLASS( ClassGroup=(Inventory), meta=(BlueprintSpawnableComponent), HideCategories = (Sockets, ComponentTick, ComponentReplication, Activation, Cooking, Collision, AssetUserData))
 class INVENTORYMODULE_API UInventoryManagerComponent : public UActorComponent
@@ -32,6 +47,9 @@ protected:
 protected:
 	UPROPERTY(Replicated)
 		TArray<AActor*> Inventory;
+
+	UPROPERTY()
+		TArray<AActor*> Quickslots;
 
 
 	/*ui*/
@@ -77,13 +95,13 @@ public:
 	//==============EQUIPPING==============
 	//=====================================
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Equipping/Unequipping")
 		virtual void Equip(AActor* Item);
 protected:
 	UFUNCTION()
 		virtual void OnEquipFinished(AActor* Item);
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Equipping/Unequipping")
 		virtual void Unequip(AActor* Item);
 protected:
 	UFUNCTION()
@@ -92,10 +110,25 @@ protected:
 	UFUNCTION()
 		virtual bool ShouldAutoEquip(AActor* Item);
 
+	//====================================
+	//=============QUICKSLOTS=============
+	//====================================
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void AssignToQuickslot(AActor* ActorToAssign, EQuickslot Quickslot);
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void EquipQuickslot(EQuickslot Quickslot);
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Quickslots")
+		virtual AActor* GetQuickslotItem(EQuickslot Quickslot);
+
 	//=======================================
 	//============ITEM MANAGEMENT============
 	//=======================================
 public:
+	/*returns a copy of the inventory (in-order) - however any modifications to this will not affect the actual Inventory within the Manager for safety reasons*/
+	UFUNCTION(BlueprintPure)
+		TArray<AActor*> GetInventory() { return Inventory; };
 	UFUNCTION(BlueprintPure)
 		bool ContainsItem(AActor* Item);
 	UFUNCTION(BlueprintCallable)
@@ -113,7 +146,7 @@ private:
 
 
 
-protected:
+public:
 	UFUNCTION(BlueprintPure)
 		virtual UInventoryItemComponent* GetItemComponent(AActor* Item);
 

@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InventoryModule/Public/Interfaces/InventoryItemInterface.h"
 #include "GameFramework/Actor.h"
 #include "Equipment.generated.h"
 
 UCLASS(abstract, Blueprintable)
-class EQUIPMENTMODULE_API AEquipment : public AActor
+class EQUIPMENTMODULE_API AEquipment : public AActor,public IInventoryItemInterface
 {
 	GENERATED_BODY()
 public:
@@ -19,6 +20,10 @@ public:
 		bool bRequiresBattery = false;
 	UPROPERTY(EditDefaultsOnly, Category = "Battery", meta = (EditCondition = bRequiresBattery))
 		bool bBatteryInstalled = true;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UInventoryItemComponent* ItemComponent;
 
 	//===================================================================================================
 	//=============================================FUNCTIONS=============================================

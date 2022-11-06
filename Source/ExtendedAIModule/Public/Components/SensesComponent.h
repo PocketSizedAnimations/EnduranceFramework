@@ -34,6 +34,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		FVector LastKnownLocation;
 
+
+
 };
 
 /*component that works hand in hand with StimuliComponents to perceive things in the world*/
@@ -48,7 +50,7 @@ public:
 protected:
 	/*the actors in the world we've actually sensed*/
 	UPROPERTY(BlueprintReadOnly)
-		TArray<FSensedActor> DetectedActors;
+		TArray<FSensedActor> DetectedActors;	
 
 protected:
 	/*AI-Manager*/
@@ -108,9 +110,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 		virtual bool HasDetected(AActor* Actor);
 	UFUNCTION(BlueprintPure)
-		virtual bool HasDetectedAnyActors();
+		virtual bool HasDetectedAnyActors(TSubclassOf<AActor> ClassFilter);
 	UFUNCTION(BlueprintCallable)
 		virtual void LoseActor(AActor* Actor);
+
+	/*returns a list of actors that this senses component currently has detected*/
+	UFUNCTION()
+		TArray<AActor*> GetDetectedActors();
 
 	//==========================
 	//==========VISION==========

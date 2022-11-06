@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-
-class FExtendedFirstPersonModule : public IModuleInterface
+class FExtendedAIModuleEditor : public IModuleInterface
 {
 public:
 
+	uint32 AssetCategory;
 
 	/** IModuleInterface implementation */
 	void StartupModule() override;

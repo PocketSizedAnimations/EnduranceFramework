@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "ExtendedAIBlackBoard.generated.h"
 
 /**
@@ -16,7 +17,8 @@ class EXTENDEDAIMODULE_API UExtendedAIBlackBoard : public UBlackboardData
 public:
 
 
-
+	UPROPERTY()
+		UBlackboardKeyType_Object* CurrentEnemy;
 
 	//=======================================================================================================================
 	//=======================================================FUNCTIONS=======================================================

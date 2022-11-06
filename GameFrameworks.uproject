@@ -115,6 +115,14 @@
 			"AdditionalDependencies": [
 				"FirstPersonModule"
 			]
+		},
+		{
+			"Name": "ExtendedAIModuleEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"UnrealEd"
+			]
 		}
 	],
 	"Plugins": [

@@ -40,6 +40,7 @@ public class ExtendedAIModule : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"AIModule",
+				"UnrealEd",
 				"GameplayTasks"
 			}
 			);

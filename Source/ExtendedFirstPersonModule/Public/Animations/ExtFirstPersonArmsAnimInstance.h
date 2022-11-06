@@ -45,6 +45,8 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool HasWeaponEquipped();
 	UFUNCTION(BlueprintPure)
+		bool HasPDAEquipped();
+	UFUNCTION(BlueprintPure)
 		class UInventoryManagerComponent* GetInventoryManager();
 	UFUNCTION(BlueprintPure)
 		class UInventoryItemComponent* GetCurrentItemComponent();

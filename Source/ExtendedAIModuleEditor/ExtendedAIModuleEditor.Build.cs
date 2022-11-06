@@ -3,9 +3,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class ExtendedFirstPersonModule : ModuleRules
+public class ExtendedAIModuleEditor : ModuleRules
 {
-	public ExtendedFirstPersonModule(ReadOnlyTargetRules Target) : base(Target)
+	public ExtendedAIModuleEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -28,7 +28,7 @@ public class ExtendedFirstPersonModule : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core"
 			}
 			);
 			
@@ -37,11 +37,21 @@ public class ExtendedFirstPersonModule : ModuleRules
 			new string[]
 			{
 				"Core",
+				"Projects",
+				"InputCore",
+				"EditorFramework",
+				"EditorStyle",
+				"LevelEditor",
+				"UnrealEd",
+				"ToolMenus",
 				"CoreUObject",
 				"Engine",
-				"EquipmentModule",
-				"InventoryModule",
-				"WeaponsModule"
+				"Slate",
+				"SlateCore",
+				"AssetTools",
+				"Kismet",
+				"AIModule",
+				"ExtendedAIModule"
 			}
 			);
 		

@@ -4,6 +4,9 @@
 #include "Animations/ExtFirstPersonArmsAnimInstance.h"
 #include "InventoryModule/Public/Components/InventoryManagerComponent.h"
 #include "InventoryModule/Public/Components/InventoryItemComponent.h"
+
+/*equipment*/
+#include "EquipmentModule/Public/Actors/PDA.h"
 #include "WeaponsModule/Public/Actors/Weapon.h"
 
 void UExtFirstPersonArmsAnimInstance::NativeInitializeAnimation()
@@ -67,6 +70,18 @@ bool UExtFirstPersonArmsAnimInstance::HasWeaponEquipped()
 		return false;
 
 	else if (Cast<AWeapon>(CurrentlyEquippedItem))
+		return true;
+
+	else
+		return false;
+}
+
+bool UExtFirstPersonArmsAnimInstance::HasPDAEquipped()
+{
+	if (!CurrentlyEquippedItem)
+		return false;
+
+	else if (Cast<APDA>(CurrentlyEquippedItem))
 		return true;
 
 	else

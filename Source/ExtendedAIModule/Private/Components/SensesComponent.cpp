@@ -2,6 +2,7 @@
 
 
 #include "Components/SensesComponent.h"
+#include "GameFramework/Actor.h"
 #include "GameFramework/GameModeBase.h"
 #include "Components/StimuliComponent.h"
 
@@ -81,14 +82,14 @@ bool USensesComponent::HasDetected(AActor* Actor)
 	return false;
 }
 
-bool USensesComponent::HasDetectedAnyActors()
+bool USensesComponent::HasDetectedAnyActors(TSubclassOf<AActor> ClassFilter)
 {
 	if (DetectedActors.Num() <= 0)
 		return false;
 
 	for (auto& Detected : DetectedActors)
 	{
-		if (Detected.DetectionState == EActorDetectionState::Detected)
+		if (Detected.DetectionState == EActorDetectionState::Detected && IsValid(Detected.Actor) && Detected.Actor->IsA(ClassFilter))
 			return true;
 	}
 
@@ -106,6 +107,19 @@ void USensesComponent::LoseActor(AActor* Actor)
 			return;
 		}
 	}
+}
+
+TArray<AActor*> USensesComponent::GetDetectedActors()
+{
+	TArray<AActor*> ActorList;
+
+	for (auto Detected : DetectedActors)
+	{
+		if (Detected.DetectionState == EActorDetectionState::Detected)
+			ActorList.Add(Detected.Actor);
+	}
+
+	return ActorList;
 }
 
 //==========================

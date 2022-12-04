@@ -123,6 +123,24 @@
 			"AdditionalDependencies": [
 				"UnrealEd"
 			]
+		},
+		{
+			"Name": "QuestsModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG",
+				"CoreUObject"
+			]
+		},
+		{
+			"Name": "QuestsEditorModule",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"UnrealEd"
+			]
 		}
 	],
 	"Plugins": [

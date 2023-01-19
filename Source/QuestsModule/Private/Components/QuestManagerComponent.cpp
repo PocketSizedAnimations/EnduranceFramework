@@ -25,7 +25,10 @@ UQuestManagerComponent::UQuestManagerComponent()
 void UQuestManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	/*generate the Widget Class*/
+	if(QuestJournalWidgetClass && GetOwner()->HasAuthority())
+		InitJournalWidget();
 }
 
 UQuest* UQuestManagerComponent::AddQuest(UQuest* Quest)

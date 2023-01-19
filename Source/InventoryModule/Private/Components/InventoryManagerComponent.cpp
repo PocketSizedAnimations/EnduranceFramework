@@ -20,6 +20,9 @@ void UInventoryManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UInventoryManagerComponent, CurrentlyEquipped);
+	DOREPLIFETIME(UInventoryManagerComponent, PrimaryWeapon);
+	DOREPLIFETIME(UInventoryManagerComponent, SecondaryWeapon);
+	DOREPLIFETIME(UInventoryManagerComponent, AlternativeWeapon);
 	DOREPLIFETIME(UInventoryManagerComponent, Inventory);
 }
 
@@ -28,6 +31,10 @@ UInventoryManagerComponent::UInventoryManagerComponent()
 {
 	Quickslots.Init(nullptr, 11);
 	bCanEquipItems = true;
+	bEnablePrimaryWeapon = true;
+	bAutoEquipPrimaryOnSpawn = true;
+	bEnableSecondaryWeapon = true;
+	bEnableAlternativeWeapon = true;
 
 	/*replication*/
 	SetIsReplicatedByDefault(true);	
@@ -68,8 +75,20 @@ void UInventoryManagerComponent::SpawnDefaultInventory()
 	/*server check*/
 	if (GetNetMode() == NM_Client) 
 		return;
+	if (IsValid(DefaultPrimary))
+	{
+		AssignPrimaryWeapon(SpawnInventoryItem(DefaultPrimary));
 
-	SpawnInventory(DefaultItems, true);
+		if(bAutoEquipPrimaryOnSpawn)
+			Equip(GetPrimaryWeapon());
+	}
+		
+	if (IsValid(DefaultSecondary))
+		AssignSecondaryWeapon(SpawnInventoryItem(DefaultSecondary));
+	if (IsValid(DefaultAlternative))
+		AssignAlternativeWeapon(SpawnInventoryItem(DefaultAlternative));
+	if(DefaultItems.IsEmpty() == false)
+		SpawnInventory(DefaultItems, true);
 }
 
 void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting)
@@ -82,16 +101,6 @@ void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Item
 	if (bClearExisting)
 		ClearInventory();
 
-	/*initialize*/
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.bNoFail = true;
-	SpawnParams.Owner = GetOwner();
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;	
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(GetOwner()->GetActorLocation());
-	SpawnTransform.SetRotation(GetOwner()->GetActorRotation().Quaternion());
-	SpawnTransform.SetScale3D(FVector(1));
-
 	/*auto-equip*/
 	AActor* AutoEquip = nullptr;
 
@@ -101,7 +110,9 @@ void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Item
 		if (ItemClass == nullptr)
 			continue;
 
-		AActor* Item = GetWorld()->SpawnActor<AActor>(ItemClass, SpawnTransform, SpawnParams);
+		/*spawn item*/
+		AActor* Item = SpawnInventoryItem(ItemClass);
+
 		if (Item)
 		{
 			if (UInventoryItemComponent* ItemComp = GetItemComponent(Item))
@@ -116,6 +127,25 @@ void UInventoryManagerComponent::SpawnInventory(TArray<TSubclassOf<AActor>> Item
 
 	if (AutoEquip != nullptr)
 		Equip(AutoEquip);
+}
+
+AActor* UInventoryManagerComponent::SpawnInventoryItem(TSubclassOf<AActor> ItemClass)
+{
+	/*safety/server-check*/
+	if (GetOwner() == nullptr || GetNetMode() == NM_Client)
+		return nullptr;
+
+	/*initialize*/
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.bNoFail = true;
+	SpawnParams.Owner = GetOwner();
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(GetOwner()->GetActorLocation());
+	SpawnTransform.SetRotation(GetOwner()->GetActorRotation().Quaternion());
+	SpawnTransform.SetScale3D(FVector(1)); 
+
+	return GetWorld()->SpawnActor<AActor>(ItemClass, SpawnTransform, SpawnParams);	
 }
 
 void UInventoryManagerComponent::ClearInventory()
@@ -230,6 +260,84 @@ bool UInventoryManagerComponent::ShouldAutoEquip(AActor* Item)
 	return false;
 }
 
+//============================================
+//=================QUICKSLOTS=================
+//============================================
+
+
+AActor* UInventoryManagerComponent::GetPrimaryWeapon()
+{
+	return PrimaryWeapon;
+}
+
+void UInventoryManagerComponent::AssignPrimaryWeapon(AActor* Weapon)
+{
+	if (!Weapon)
+		return;
+
+	if (bCanEquipItems && bEnablePrimaryWeapon)
+		PrimaryWeapon = Weapon;
+
+	if (OnPrimaryAssigned.IsBound())
+		OnPrimaryAssigned.Broadcast(this,GetOwner(),PrimaryWeapon);
+}
+
+void UInventoryManagerComponent::EquipPrimaryWeapon()
+{
+	if (bCanEquipItems && bEnablePrimaryWeapon && PrimaryWeapon)
+		Equip(PrimaryWeapon);
+}
+
+AActor* UInventoryManagerComponent::GetSecondaryWeapon()
+{
+	return SecondaryWeapon;
+}
+
+void UInventoryManagerComponent::AssignSecondaryWeapon(AActor* Weapon)
+{
+	if (!Weapon)
+		return;
+
+	if (bCanEquipItems && bEnableSecondaryWeapon)
+		SecondaryWeapon = Weapon;
+
+
+	if (OnSecondaryAssigned.IsBound())
+		OnSecondaryAssigned.Broadcast(this, GetOwner(), SecondaryWeapon);
+}
+
+void UInventoryManagerComponent::EquipSecondaryWeapon()
+{
+	if (bCanEquipItems && bEnableSecondaryWeapon && SecondaryWeapon)
+		Equip(SecondaryWeapon);
+}
+
+AActor* UInventoryManagerComponent::GetAlternativeWeapon()
+{
+	return AlternativeWeapon;
+}
+
+void UInventoryManagerComponent::AssignAlternativeWeapon(AActor* Weapon)
+{
+	if (!Weapon)
+		return;
+
+	if (bCanEquipItems && bEnableAlternativeWeapon)
+		AlternativeWeapon = Weapon;
+
+
+	if (OnAlternativeAssigned.IsBound())
+		OnAlternativeAssigned.Broadcast(this, GetOwner(), AlternativeWeapon);
+}
+
+void UInventoryManagerComponent::EquipAlternativeWeapon()
+{
+	if (bCanEquipItems && bEnableAlternativeWeapon && AlternativeWeapon)
+		Equip(AlternativeWeapon);
+}
+
+
+
 void UInventoryManagerComponent::AssignToQuickslot(AActor* ActorToAssign, EQuickslot Quickslot)
 {
 	/*safety check*/
@@ -281,7 +389,9 @@ bool UInventoryManagerComponent::AddItem(AActor* Item)
 		RegisterItem(Item);
 		/*disables collision & hides model*/
 		StoreItem(Item);
-		//Item->b
+		
+		if (OnItemAdded.IsBound())
+			OnItemAdded.Broadcast(this, GetOwner(), Item);
 
 		return true;
 	}		

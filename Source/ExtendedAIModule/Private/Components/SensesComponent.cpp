@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/GameModeBase.h"
 #include "Components/StimuliComponent.h"
+#include "AudibleModule/Public/Subsystems/AudioSubsystem.h"
 
 USensesComponent::USensesComponent()
 {
@@ -20,11 +21,20 @@ void USensesComponent::BeginPlay()
 	/*server-initiation*/
 	if (GetOwner() && GetNetMode() < NM_Client)
 	{
+		/*begin vision updates*/
 		if (bHasVision)
 			GetOwner()->GetWorldTimerManager().SetTimer(VisionUpdateHandler, this, &USensesComponent::OnVisionUpdate, VisionUpdateInterval, true);
 	
-		if (GetAISubsystem())
-			GetAISubsystem()->RegisterSensesComponent(this);
+		/*register senses to AI Subsystem*/
+		if (UExtendedAISubsystem* AISubsystem = GetAISubsystem())
+			AISubsystem->RegisterSensesComponent(this);
+
+		/*register hearing to AudioSubsystem*/
+		if (bHasHearing) 
+		{
+			if (UAudioSubsystem* AudioSubsytem = GetAudioSubsystem())
+				AudioSubsytem->RegisterSoundReceiver(this);
+		}
 	}
 }
 
@@ -33,6 +43,22 @@ void USensesComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+}
+
+void USensesComponent::SetAlertState(EAlertState NewAlertState)
+{
+	/*no changes if same alert*/
+	if (GetAlertState() == NewAlertState)
+		return;
+
+
+	PreviousAlertState = AlertState;
+	AlertState = NewAlertState;
+}
+
+EAlertState USensesComponent::GetAlertState()
+{
+	return AlertState;
 }
 
 
@@ -192,5 +218,40 @@ bool USensesComponent::IsWithinVisionCone(AActor* Actor)
 	//UE_LOG(LogPath, Warning, TEXT("DotProductFacing: %f, PeripheralVisionCosine: %f"), SelfToOtherDir | MyFacingDir, FMath::Cos(FMath::DegreesToRadians(VisionConeAngle)));
 	
 	return ((SelfToOtherDir | MyFacingDir) >= FMath::Cos(FMath::DegreesToRadians(VisionConeAngle)));
+}
+
+
+//===========================
+//==========HEARING==========
+//===========================
+
+/*Produced by ISoundReceiverInterface - must register SensesComponent to AudioSubsystem to be eligable for sound reception!*/
+void USensesComponent::ReceiveSoundNotification_Implementation(FVector SoundLocation, ESoundCategory SoundCategory, AActor* SoundMaker, AController* SoundInstigator)
+{
+	if(!bHasHearing)
+		return;
+
+	LastHeardSound = FSoundEvent(SoundLocation, SoundCategory, GetWorld()->TimeSeconds);
+
+	/*produce notification*/
+	if (OnSoundHeard.IsBound())
+		OnSoundHeard.Broadcast(SoundLocation, SoundCategory, SoundMaker, SoundInstigator);
+}
+
+bool USensesComponent::HeardNoise()
+{
+	if(!bHasHearing || LastHeardSound.Timestamp < 0)
+		return false;
+
+	if (LastHeardSound.Timestamp <= GetWorld()->TimeSeconds)
+		return true;
+
+	return false;
+
+}
+
+UAudioSubsystem* USensesComponent::GetAudioSubsystem()
+{
+	return GetWorld()->GetSubsystem<UAudioSubsystem>();
 }
 

@@ -41,7 +41,8 @@ public class ExtendedAIModule : ModuleRules
 				"Engine",
 				"AIModule",
 				"UnrealEd",
-				"GameplayTasks"
+				"GameplayTasks",
+				"AudibleModule"
 			}
 			);
 		

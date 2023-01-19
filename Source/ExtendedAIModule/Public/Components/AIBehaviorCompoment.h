@@ -38,6 +38,20 @@ public:
 		class USensesComponent* OwnerSensesComponent;
 
 private:
+	/*states*/
+	UPROPERTY(EditAnywhere, Instanced, Category = "State", meta = (DisplayName = "Default State"))
+		class UAIState* State;
+	UPROPERTY()
+		class UAIState* PreviousState;
+
+	/*goals*/
+private:
+	UPROPERTY(EditInstanceOnly, Instanced, Category = "Goal")
+		class UAIGoal* Goal;
+	UPROPERTY()
+		class UAIGoal* PreviousGoal;
+
+private:
 	/*current enemy we would like to be dead*/
 	UPROPERTY()
 		AActor* CurrentEnemy;
@@ -54,7 +68,15 @@ private:
 	UPROPERTY()
 		TArray<class UThreatEvaluation*> Threats;
 
-
+private:
+	UPROPERTY(EditAnywhere, Category = "Aggression", meta=(UIMin=0,UIMax=100))
+		float Aggression = 62.0f;	
+	UPROPERTY(EditAnywhere, Category = "Aggression", meta=(UIMin=0,UIMax=100))
+		float MinAggression = 5.0f;
+	UPROPERTY(EditAnywhere, Category = "Aggression", meta = (UIMin=0, UIMax=100))
+		float MaxAggression = 100.0f;
+	UPROPERTY(EditAnywhere, Category = "Aggression")
+		bool bRandomAggressionOnSpawn = false;
 
 
 		//===============================================================================================
@@ -76,6 +98,51 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//====================================================
+	//=======================STATES=======================
+	//====================================================
+public:
+	UFUNCTION(BlueprintCallable, Category = "States")
+		virtual void SetState(class UAIState* NewState);
+	UFUNCTION(BlueprintPure, Category = "States")
+		class UAIState* GetState();
+	UFUNCTION(BlueprintPure, Category = "States")
+		class UAIState* GetPreviousState();
+	UFUNCTION(BlueprintCallable, Category = "States")
+		void ClearState();
+	UFUNCTION(BlueprintCallable, Category = "States")
+		void ClearPreviousState();
+
+	//=====================================================
+	//========================GOALS========================
+	//=====================================================
+public:
+	UFUNCTION(BlueprintCallable, Category = "Goals")
+		virtual void SetGoal(class UAIGoal* NewGoal);
+	UFUNCTION(BlueprintPure, Category = "Goals")
+		class UAIGoal* GetGoal();
+	UFUNCTION(BlueprintPure, Category = "Goals")
+		class UAIGoal* GetPreviousGoal();
+	UFUNCTION(BlueprintCallable, Category = "Goals")
+		void ClearGoal();
+
+
+
+	//=====================================================
+	//======================AGGRESSION=====================
+	//=====================================================
+public:
+	UFUNCTION(BlueprintPure, Category = "Aggression")
+		float GetAggressionLevel();
+	UFUNCTION(BlueprintPure, Category = "Aggression")
+		float GetMaxAggressionLevel();
+	UFUNCTION(BlueprintPure, Category = "Aggression")
+		float GetMinAggressionLevel();
+	UFUNCTION(BlueprintCallable, Category = "Aggression")
+		void SetAggression(float NewAggression);
+	UFUNCTION(BlueprintCallable, Category = "Aggression")
+		float SetRandomAggressionLevel();
 
 	//=====================================================
 	//===================THREAT HANDLING===================

@@ -2,7 +2,7 @@
 
 
 #include "Blackboard/Decorators/BTDecorator_HasDetectedActors.h"
-#include "Controllers/ExtendedAIController.h"
+#include "AIController.h"
 #include "Components/SensesComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -40,7 +40,7 @@ bool UBTDecorator_HasDetectedActors::CalculateRawConditionValue(UBehaviorTreeCom
 
 bool UBTDecorator_HasDetectedActors::CheckForDetectedActors(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	AExtendedAIController* AIController = Cast<AExtendedAIController>(OwnerComp.GetAIOwner());
+	AAIController* AIController = OwnerComp.GetAIOwner();
 
 	if (!AIController || !AIController->GetPawn())
 		return false;

@@ -141,6 +141,22 @@
 			"AdditionalDependencies": [
 				"UnrealEd"
 			]
+		},
+		{
+			"Name": "AudibleModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		},
+		{
+			"Name": "ModManagementModule",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [

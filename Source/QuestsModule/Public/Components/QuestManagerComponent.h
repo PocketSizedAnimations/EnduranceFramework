@@ -23,6 +23,7 @@ private:
 	UPROPERTY()
 		TArray<class UQuest*> Quests;
 
+public:
 	UPROPERTY(BlueprintAssignable)
 		FOnQuestModified OnQuestAdded;
 	UPROPERTY(BlueprintAssignable)
@@ -31,7 +32,7 @@ private:
 		FOnQuestModified OnQuestCompleted;
 
 
-	
+protected:
 	/*the class to use when auto-creating the widget*/
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<class UQuestJournalWidget> QuestJournalWidgetClass;
@@ -76,6 +77,7 @@ protected:
 	//==================
 	//========UI========
 	//==================
+public:
 	UFUNCTION()
 		void InitJournalWidget();
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -85,6 +87,7 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "UI")
 		bool IsJournalWidgetOpened();
 
+protected:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		void NotifyWidgetOfNewQuest(class UQuest* Quest);
 	UFUNCTION(BlueprintCallable, Category = "UI")

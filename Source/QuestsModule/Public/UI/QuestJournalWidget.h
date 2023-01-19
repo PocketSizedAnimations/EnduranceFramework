@@ -27,6 +27,7 @@ public:
 	
 	UQuestJournalWidget(const FObjectInitializer& ObjectInitializer);
 
+public:
 	/*event that'll fire whenever a new quest is added*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quests")
 		void OnQuestAdded(class UQuestManagerComponent* QuestManager, class UQuest* Quest);

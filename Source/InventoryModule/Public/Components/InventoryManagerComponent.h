@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "InventoryManagerComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnItemAdded, UInventoryManagerComponent*, InventoryManager, AActor*, OwningActor, AActor*, InventoryItem);
+
 UENUM(BlueprintType)
 enum class EQuickslot : uint8
 {
@@ -31,19 +33,34 @@ class INVENTORYMODULE_API UInventoryManagerComponent : public UActorComponent
 public:
 
 
-	UPROPERTY(EditDefaultsOnly)
-		bool bCanEquipItems = false;
 protected:
 	/*what's currently active for this manager*/
 	UPROPERTY(Replicated)
 		AActor* CurrentlyEquipped;
+	UPROPERTY(Replicated)
+		AActor* PrimaryWeapon;
+	UPROPERTY(Replicated)
+		AActor* AlternativeWeapon;
+	UPROPERTY(Replicated)
+		AActor* SecondaryWeapon;
 private:
 	/*used to track an item that wants to be equipped but waiting on an action to complete*/
 	UPROPERTY()
 		AActor* PendingEquip;
 protected:
-	UPROPERTY(EditAnywhere, meta = (MustImplement="InventoryItemInterface"))
+	/*Primary Weapon - must implement PrimaryWeaponInterface*/
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (EditCondition = "bEnablePrimaryWeapon", EditConditionHides, MustImplement = "PrimaryWeaponInterface", DisplayName = "Primary Weapon"))
+		TSubclassOf<AActor> DefaultPrimary;
+	/*Primary Weapon - must implement SecondaryWeaponInterface*/
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (EditCondition = "bEnableSecondaryWeapon", EditConditionHides, MustImplement = "SecondaryWeaponInterface", DisplayName = "Secondary Weapon"))
+		TSubclassOf<AActor> DefaultSecondary;
+	/*Primary Weapon - must implement AlternativeWeaponInterface*/
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (EditCondition = "bEnableAlternativeWeapon", EditConditionHides, MustImplement = "AlternativeWeaponInterface", DisplayName = "Alternative Weapon"))
+		TSubclassOf<AActor> DefaultAlternative;
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (MustImplement="InventoryItemInterface", DisplayName = "Inventory"))
 		TArray<TSubclassOf<AActor>> DefaultItems;
+
+
 protected:
 	UPROPERTY(Replicated)
 		TArray<AActor*> Inventory;
@@ -52,12 +69,36 @@ protected:
 		TArray<AActor*> Quickslots;
 
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Configuration")
+		bool bCanEquipItems;
+	UPROPERTY(EditDefaultsOnly, Category = "Configuration|Primary", meta = (EditCondition="bCanEquipItems"))
+		bool bEnablePrimaryWeapon;
+	/*automatically equips Primary as the CurrentWeapon during initial spawning*/
+	UPROPERTY(EditDefaultsOnly, Category = "Configuration|Primary", meta = (EditConditino = "bEnablePrimaryWeapon"))
+		bool bAutoEquipPrimaryOnSpawn;
+	UPROPERTY(EditDefaultsOnly, Category = "Configuration|Secondary", meta = (EditCondition = "bCanEquipItems"))
+		bool bEnableSecondaryWeapon;
+	UPROPERTY(EditDefaultsOnly, Category = "Configuration|Alternative", meta = (EditCondition = "bCanEquipItems"))
+		bool bEnableAlternativeWeapon;
+
+
 	/*ui*/
 	UPROPERTY(EditAnywhere, meta = (DisplayName="Inventory UI Class"))
 		TSubclassOf<class UInventoryContainerWidget> InventoryUIClass;
 	/*ui-reference*/
 	UPROPERTY()
 		UInventoryContainerWidget* InventoryWidget;
+
+	/*event/delegates*/
+	UPROPERTY(BlueprintAssignable)
+		FOnItemAdded OnItemAdded;
+	UPROPERTY(BlueprintAssignable)
+		FOnItemAdded OnPrimaryAssigned;
+	UPROPERTY(BlueprintAssignable)
+		FOnItemAdded OnSecondaryAssigned;
+	UPROPERTY(BlueprintAssignable)
+		FOnItemAdded OnAlternativeAssigned;
 
 		//===================================================================================================
 		//=============================================FUNCTIONS=============================================
@@ -82,6 +123,8 @@ protected:
 		virtual void SpawnDefaultInventory();
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 		virtual void SpawnInventory(TArray<TSubclassOf<AActor>> Items, bool bClearExisting = true);
+	UFUNCTION()
+		virtual AActor* SpawnInventoryItem(TSubclassOf<AActor> ItemClass);
 public:
 	UFUNCTION()
 		virtual void ClearInventory();
@@ -115,6 +158,25 @@ protected:
 	//====================================
 
 public:
+	UFUNCTION(BlueprintPure, Category = "Quickslots")
+		virtual AActor* GetPrimaryWeapon();
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void AssignPrimaryWeapon(AActor* Weapon);
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void EquipPrimaryWeapon();
+	UFUNCTION(BlueprintPure, Category = "Quickslots")
+		virtual AActor* GetSecondaryWeapon();
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void AssignSecondaryWeapon(AActor* Weapon);
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void EquipSecondaryWeapon();
+	UFUNCTION(BlueprintPure, Category = "Quickslots")
+		virtual AActor* GetAlternativeWeapon();
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void AssignAlternativeWeapon(AActor* Weapon);
+	UFUNCTION(BlueprintCallable, Category = "Quickslots")
+		virtual void EquipAlternativeWeapon();
+
 	UFUNCTION(BlueprintCallable, Category = "Quickslots")
 		virtual void AssignToQuickslot(AActor* ActorToAssign, EQuickslot Quickslot);
 	UFUNCTION(BlueprintCallable, Category = "Quickslots")

@@ -8,6 +8,9 @@
 #include "GameFramework/Pawn.h"
 #include "DataAssets/ThreatEvaluation.h"
 
+/*goals*/
+#include "Goals/AIGoal.h"
+
 #include "Components/SensesComponent.h"
 
 
@@ -56,6 +59,93 @@ void UAIBehaviorCompoment::TickComponent(float DeltaTime, ELevelTick TickType, F
 	/*calculate threats from senses component*/
 	if (bCalcThreatsFromSensesComponent)
 		CalcThreats();	
+}
+
+//====================================================
+//=======================STATES=======================
+//====================================================
+
+void UAIBehaviorCompoment::SetState(UAIState* NewState)
+{
+	PreviousState = State;
+	State = NewState;
+}
+
+UAIState* UAIBehaviorCompoment::GetState()
+{
+	return State;
+}
+
+UAIState* UAIBehaviorCompoment::GetPreviousState()
+{
+	return PreviousState;
+}
+
+void UAIBehaviorCompoment::ClearState()
+{	
+	State = nullptr;
+}
+
+void UAIBehaviorCompoment::ClearPreviousState()
+{
+	PreviousState = nullptr;
+}
+
+//=====================================================
+//========================GOALS========================
+//=====================================================
+
+void UAIBehaviorCompoment::SetGoal(UAIGoal* NewGoal)
+{	
+	PreviousGoal = Goal;
+	Goal = NewGoal;
+}
+
+UAIGoal* UAIBehaviorCompoment::GetGoal()
+{
+	return Goal;
+}
+
+UAIGoal* UAIBehaviorCompoment::GetPreviousGoal()
+{
+	return PreviousGoal;
+}
+
+void UAIBehaviorCompoment::ClearGoal()
+{
+	if(Goal != nullptr)
+		PreviousGoal = Goal;
+	
+	Goal = nullptr;
+}
+
+//=====================================================
+//======================AGGRESSION=====================
+//=====================================================
+float UAIBehaviorCompoment::GetAggressionLevel()
+{
+	return Aggression;
+}
+
+float UAIBehaviorCompoment::GetMaxAggressionLevel()
+{
+	return MaxAggression;
+}
+
+float UAIBehaviorCompoment::GetMinAggressionLevel()
+{
+	return MinAggression;
+}
+
+void UAIBehaviorCompoment::SetAggression(float NewAggression)
+{
+	Aggression = FMath::Clamp(NewAggression, MinAggression, MaxAggression);
+}
+
+float UAIBehaviorCompoment::SetRandomAggressionLevel()
+{		
+	SetAggression(FMath::RandRange(MinAggression, MaxAggression));	
+	return Aggression;
 }
 
 

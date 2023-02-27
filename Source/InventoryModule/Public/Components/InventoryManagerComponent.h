@@ -7,6 +7,7 @@
 #include "InventoryManagerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnItemAdded, UInventoryManagerComponent*, InventoryManager, AActor*, OwningActor, AActor*, InventoryItem);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemEquipped, AActor*, Item);
 
 UENUM(BlueprintType)
 enum class EQuickslot : uint8
@@ -82,7 +83,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Configuration|Alternative", meta = (EditCondition = "bCanEquipItems"))
 		bool bEnableAlternativeWeapon;
 
-
+protected:
 	/*ui*/
 	UPROPERTY(EditAnywhere, meta = (DisplayName="Inventory UI Class"))
 		TSubclassOf<class UInventoryContainerWidget> InventoryUIClass;
@@ -90,7 +91,16 @@ protected:
 	UPROPERTY()
 		UInventoryContainerWidget* InventoryWidget;
 
+public:
 	/*event/delegates*/
+	UPROPERTY(BlueprintAssignable)
+		FOnItemEquipped OnItemEquipped;
+	UPROPERTY(BlueprintAssignable)
+		FOnItemEquipped OnPrimaryEquipped;
+	UPROPERTY(BlueprintAssignable)
+		FOnItemEquipped OnSecondaryEquipped;
+	UPROPERTY(BlueprintAssignable)
+		FOnItemEquipped OnAlternativeEquipped;
 	UPROPERTY(BlueprintAssignable)
 		FOnItemAdded OnItemAdded;
 	UPROPERTY(BlueprintAssignable)

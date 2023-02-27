@@ -96,6 +96,17 @@ void UInventoryItemComponent::EndUnequip()
 
 }
 
+AActor* UInventoryItemComponent::GetOwningActor()
+{
+	if (GetInventoryManager())
+	{
+		return GetInventoryManager()->GetOwner();
+	}
+
+	return nullptr;
+}
+
+
 void UInventoryItemComponent::EnableCollision()
 {
 	if (GetOwner())

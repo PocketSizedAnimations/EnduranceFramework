@@ -4,6 +4,8 @@
 #include "Actors/Weapon.h"
 
 #include "InventoryModule/Public/Components/InventoryItemComponent.h"
+#include "InventoryModule/Public/Components/InventoryItemComponent.h"
+#include "GameFramework/Character.h"
 
 
 // Sets default values
@@ -58,4 +60,3 @@ void AWeapon::OnEquipBegin(AActor* Actor, UInventoryItemComponent* ItemComp, UIn
 {
 
 }
-

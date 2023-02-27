@@ -221,6 +221,15 @@ void UInventoryManagerComponent::OnEquipFinished(AActor* Item)
 	CurrentlyEquipped = Item;
 	PendingEquip = nullptr;
 
+	/*event/delegate notifications*/
+	if (CurrentlyEquipped != nullptr && OnItemEquipped.IsBound()) // any item
+		OnItemEquipped.Broadcast(CurrentlyEquipped);
+	if (CurrentlyEquipped != nullptr && CurrentlyEquipped == PrimaryWeapon && OnPrimaryEquipped.IsBound()) //primary weapon
+		OnPrimaryEquipped.Broadcast(CurrentlyEquipped);
+	if (CurrentlyEquipped != nullptr && CurrentlyEquipped == SecondaryWeapon && OnSecondaryEquipped.IsBound()) //secondary weapon
+		OnSecondaryEquipped.Broadcast(CurrentlyEquipped);
+	if (CurrentlyEquipped != nullptr && CurrentlyEquipped == AlternativeWeapon && OnAlternativeEquipped.IsBound()) //alternative wepaon
+		OnAlternativeEquipped.Broadcast(CurrentlyEquipped);
 }
 
 void UInventoryManagerComponent::Unequip(AActor* Item)

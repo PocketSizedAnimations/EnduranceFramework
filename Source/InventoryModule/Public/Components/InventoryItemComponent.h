@@ -107,6 +107,9 @@ private:
 public:
 	UFUNCTION(BlueprintPure)
 		class UInventoryManagerComponent* GetInventoryManager() { return InventoryManager; };
+	UFUNCTION(BlueprintPure)
+		class AActor* GetOwningActor();
+
 		
 private:
 	UFUNCTION()

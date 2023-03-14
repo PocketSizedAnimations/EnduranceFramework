@@ -24,16 +24,28 @@ class INTERACTIONSMODULE_API IInteractiveShapeInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	/*determines if this object is in a state of being able to be used*/
+	/*determines if this object has any interactions available or is disabled/busy*/
 	UFUNCTION()
-		virtual bool IsInteractive(AActor* User) {return true;};
+		virtual bool IsInteractionAvailable(AActor* User) {return true;};
 	UFUNCTION()
 		virtual bool IsInteractionEnabled() { return true; };
 	/*return fales if the interaction attempt was denied*/
 	UFUNCTION()
 		virtual bool BeginInteraction(AActor* User) { return false; };
 	UFUNCTION()
-		virtual void EndInteraction(AActor* User, bool bInteractionCanceled = false) { };
+		virtual void EndInteraction(AActor* User) { };
+	UFUNCTION()
+		virtual void CancelInteraction(AActor* User) { };
+	UFUNCTION()
+		virtual void CompleteInteraction(AActor* User) {};
+
+	UFUNCTION()
+		virtual void OnHoverBegin(AActor* User) {};
+	UFUNCTION()
+		virtual void OnHoverEnd(AActor* User) {};
+
+	UFUNCTION()
+		virtual bool IsInteractionActive() { return false; };
 
 	/*how long we've been interacting*/
 	UFUNCTION()

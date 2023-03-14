@@ -12,6 +12,9 @@
 /*replication*/
 #include "Net/UnrealNetwork.h"
 
+/*utilities*/
+#include "TimerManager.h"
+
 
 /*setup replication*/
 void UProjectileSpawnerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -75,7 +78,13 @@ void UProjectileSpawnerComponent::EndFire()
 	if (GetNetMode() == NM_Client && IsLocallyControlled())
 		ServerNotify_EndFire();
 
+	OnEndFire();
+}
+
+void UProjectileSpawnerComponent::OnEndFire()
+{
 	bFiring = false;
+	ShotsFired = 0;
 }
 
 bool UProjectileSpawnerComponent::ServerNotify_BeginFire_Validate()
@@ -106,6 +115,28 @@ bool UProjectileSpawnerComponent::IsFiring()
 	return bFiring;
 }
 
+bool UProjectileSpawnerComponent::HasShotQueued()
+{
+	/*if we're no longer trying to fire - go ahead and bail*/
+	if (bFiring == false)
+		return false;
+
+	/*first-shot*/
+	if (ShotsFired <= 0)
+		return true;
+
+	/*single-shot weapons need to let go of fire to reset*/
+	if (FireType == EFireType::Single && ShotsFired > 0)
+		return false;
+
+
+	if (FireType == EFireType::FullAuto)
+		return true;
+
+	else
+		return false;
+}
+
 /* PerformFire() - loopable function that performs the actual firing
 *  don't call directly - use BeginFire() instead to perform various checks first
 * 
@@ -114,10 +145,16 @@ bool UProjectileSpawnerComponent::IsFiring()
 void UProjectileSpawnerComponent::PerformFire()
 {
 	UE_LOG(LogTemp, Log, TEXT("%s PerformFire()"), NETMODE_WORLD);
-	/*perform actual firing*/
-	bFiring = true;
 
+	/*fire loop*/
+	bFiring = true;
+	ShotsFired++; //increment the amount of shots fired
+	
+	/*perform the actual shot*/
 	PerformShot();
+
+	/*kicks off the fire-interval delay which will fire the next shot*/
+	BeginFireInterval();
 }
 
 /*creates a projectile or insta-hit trace based on info - 
@@ -153,6 +190,33 @@ void UProjectileSpawnerComponent::PerformShot()
 	{
 
 	}
+}
+
+void UProjectileSpawnerComponent::BeginFireInterval()
+{
+	GetOwner()->GetWorldTimerManager().SetTimer(FireIntervalTimer, this, &UProjectileSpawnerComponent::EndFireInterval, GetFireRateInSeconds(), false);
+}
+
+void UProjectileSpawnerComponent::EndFireInterval()
+{
+	/*if we're expecting another shot - we'll go ahead and fire again*/
+	if (HasShotQueued())
+		PerformFire();
+	else
+	{
+		EndFire();
+		OnEndFireInterval();
+	}	
+}
+
+void UProjectileSpawnerComponent::OnEndFireInterval()
+{
+
+}
+
+float UProjectileSpawnerComponent::GetFireRateInSeconds()
+{
+	return (1 / (FireRate / 60));
 }
 
 

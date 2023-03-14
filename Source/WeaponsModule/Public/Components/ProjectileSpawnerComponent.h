@@ -67,6 +67,11 @@ private:
 	/*projectiles per-minute*/
 	UPROPERTY(EditAnywhere, Category = "Projectiles")
 		float FireRate = 600.0f;
+	/*how many shots have been fired during this cycle - resets to 0 when the firing stops*/
+	UPROPERTY()
+		int32 ShotsFired;
+	FTimerHandle FireIntervalTimer;
+
 	/*the projectile class we'll fire*/	
 	UPROPERTY(EditAnywhere, Category = "Projectiles", meta = (DisplayName = "Projectile"))
 		class UProjectileInfo* ProjectileInfo;
@@ -92,6 +97,12 @@ public:
 		virtual void BeginFire();
 	UFUNCTION()
 		virtual void EndFire();
+
+protected:
+	/*event fired after EndFire() is called*/
+	UFUNCTION()
+		virtual void OnEndFire();
+public:
 	/*server-notifications of start/stops*/
 	UFUNCTION(Server, Reliable, WithValidation)
 		virtual void ServerNotify_BeginFire();
@@ -101,11 +112,30 @@ public:
 		bool IsFiring();
 
 protected:
-	/*performs the actual firing logic*/
+	/*checks if a shot should be fired*/
+	UFUNCTION()
+		virtual bool HasShotQueued();
+	/*performs the firing loop logic*/
 	UFUNCTION()
 		virtual void PerformFire();
+	/*generates the actual shot trace/projectile*/
 	UFUNCTION()
 		virtual void PerformShot();
+
+
+	/*executes a timed delay that will automatically trigger the next shot*/
+	UFUNCTION()
+		virtual void BeginFireInterval();
+	/*called when the interval completes*/
+	UFUNCTION()
+		virtual void EndFireInterval();
+	/*event for when Fire Interval Completes*/
+	UFUNCTION()
+		virtual void OnEndFireInterval();
+	
+public:
+	UFUNCTION(BlueprintPure, Category = "Firing")
+		float GetFireRateInSeconds();
 
 protected:
 	UFUNCTION()

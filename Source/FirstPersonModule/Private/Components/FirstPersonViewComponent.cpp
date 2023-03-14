@@ -7,6 +7,9 @@
 #include "Components/FirstPersonArmsComponent.h"
 #include "Animations/FirstPersonArmsAnimInstance.h"
 
+/*ui*/
+#include "Blueprint/UserWidget.h"
+
 // Sets default values for this component's properties
 UFirstPersonViewComponent::UFirstPersonViewComponent(const FObjectInitializer& ObjectInitializer)
 {
@@ -42,6 +45,7 @@ void UFirstPersonViewComponent::InitializeComponent()
 	InitializeCameraComponent();
 	InitializeArmsMesh();
 	SyncPawnEyeHeight();
+	
 
 	Super::InitializeComponent();
 
@@ -52,8 +56,6 @@ void UFirstPersonViewComponent::InitializeComponent()
 void UFirstPersonViewComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 }
 
 void UFirstPersonViewComponent::InitializeFirstPersonScene()
@@ -133,5 +135,27 @@ void UFirstPersonViewComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UFirstPersonViewComponent::InitializePlayerHUD(APlayerController* PlayerController)
+{
+	if (!HUDClass || !GetOwner())
+		return;
+
+	/*local-pawn check - no need to add widget otherwise*/
+	APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn->IsLocallyControlled())
+		return;
+	
+	if (PlayerController)
+	{
+		PlayerHUD = CreateWidget<UUserWidget>(PlayerController, HUDClass,"PlayerHUDWidget");
+		PlayerHUD->AddToViewport();
+		
+		if (bAutoShowHUD)
+		{
+			PlayerHUD->AddToViewport(999);
+		}
+	}
 }
 

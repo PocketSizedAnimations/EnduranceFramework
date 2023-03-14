@@ -5,6 +5,10 @@
 #include "Camera/CameraComponent.h"
 #include <InteractionsModule/Public/Interfaces/InteractiveShapeInterface.h>
 
+#if WITH_EDITOR
+#include "DrawDebugHelpers.h"
+#endif
+
 UInteractiveManagerComponent::UInteractiveManagerComponent()
 {	
 	TraceLength = 100.0f;
@@ -28,6 +32,7 @@ void UInteractiveManagerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 	/*perform trace*/
 	TraceForInteractives();
+	CalcInteractives();
 	UpdateActiveInteractiveStatus();	
 }
 
@@ -48,7 +53,16 @@ bool UInteractiveManagerComponent::Interact(UActorComponent* Interactive)
 	
 	/*attempt interaction*/
 	if (IsInteractive(Interactive))
+	{
+		/*clients need to request to interact*/
+		if (GetNetMode() == NM_Client)
+		{
+			ServerRequestInteract(Interactive);
+			return true;
+		}
+
 		bInteractionSuccessful = Cast<IInteractiveShapeInterface>(Interactive)->BeginInteraction(User);
+	}		
 
 	/*broadcast results*/
 	if (bInteractionSuccessful)	{
@@ -66,12 +80,23 @@ bool UInteractiveManagerComponent::Interact(UActorComponent* Interactive)
 	}	
 }
 
+bool UInteractiveManagerComponent::ServerRequestInteract_Validate(UActorComponent* Interactive)
+{
+	return true;
+}
+
+/*ServerRequestInteract() - client requesting the server to let them begin interacting with this item*/
+void UInteractiveManagerComponent::ServerRequestInteract_Implementation(UActorComponent* Interactive)
+{
+	Interact(Interactive);
+}
+
 void UInteractiveManagerComponent::CancelInteraction(UActorComponent* Interactive)
 {
 	if(!GetCurrentInteractive())
 		return;
 
-	Cast<IInteractiveShapeInterface>(GetCurrentInteractive())->EndInteraction(GetOwner(), true);
+	Cast<IInteractiveShapeInterface>(GetCurrentInteractive())->CancelInteraction(GetOwner());
 }
 
 
@@ -80,6 +105,30 @@ void UInteractiveManagerComponent::CancelInteraction(UActorComponent* Interactiv
 //============================================
 //===========INTERACTIVES MANAGEMENT==========
 //============================================
+
+void UInteractiveManagerComponent::CalcInteractives()
+{
+	/*loop through all traced interactives - and see if we should add it to the list*/
+	for (auto TracedInteractive : TracedInteractives)
+	{
+		if (Interactives.Contains(TracedInteractive) == false)
+		{
+			AddInteractive(TracedInteractive);			
+			NotifyInteractiveOfHover(TracedInteractive);
+		}
+	}
+
+	/*cleanup no-longer valid interactives*/
+	for (int32 i = 0; i < Interactives.Num(); i++)
+	{
+		UActorComponent* Interactive = Interactives[i];
+		if (TracedInteractives.Contains(Interactive) == false)
+		{			
+			RemoveInteractive(Interactive);			
+			NotifyInteractiveOfUnhover(Interactive);
+		}
+	}
+}
 
 bool UInteractiveManagerComponent::IsInteractive(UActorComponent* Interactive)
 {
@@ -121,6 +170,18 @@ void UInteractiveManagerComponent::UpdateActiveInteractiveStatus()
 		ActiveInteraction = nullptr;
 }
 
+void UInteractiveManagerComponent::NotifyInteractiveOfHover(UActorComponent*& Interactive)
+{
+	if (IsInteractive(Interactive))
+		Cast<IInteractiveShapeInterface>(Interactive)->OnHoverBegin(GetOwner());
+}
+
+void UInteractiveManagerComponent::NotifyInteractiveOfUnhover(UActorComponent*& Interactive)
+{
+	if (IsInteractive(Interactive))
+		Cast<IInteractiveShapeInterface>(Interactive)->OnHoverEnd(GetOwner());
+}
+
 UActorComponent* UInteractiveManagerComponent::GetCurrentInteractive()
 {
 	if (Interactives.Num() <= 0)
@@ -133,24 +194,56 @@ UActorComponent* UInteractiveManagerComponent::GetCurrentInteractive()
 //============TRACING============
 //===============================
 void UInteractiveManagerComponent::TraceForInteractives()
-{	
-	TArray<FHitResult> HitResults;
-	FCollisionQueryParams CollisionParams;
-
-	ClearInteractives();
-
-	if(GetWorld()->SweepMultiByChannel(HitResults, GetTraceStart(), GetTraceEnd(), GetTraceRotation().Quaternion(), GetTraceChannel(), FCollisionShape::MakeBox(FVector(8)), CollisionParams))
+{
+	/*run only for locally controlled characters to save on performance*/
+	if (APawn* Pawn = Cast<APawn>(GetOwner()))
 	{
-		/*loop through hit results*/
-		for (auto HitResult : HitResults)
+		if (Pawn->IsLocallyControlled())
 		{
-			if (IsInteractive(Cast<UActorComponent>(HitResult.GetComponent())))
+			/*clear previous list of traced objects*/
+			TracedInteractives.Empty();
+
+			/*initialize properties*/
+			TArray<FHitResult> HitResults;
+			FCollisionQueryParams CollisionParams;			
+
+			if (GetWorld()->SweepMultiByChannel(HitResults, GetTraceStart(), GetTraceEnd(), GetTraceRotation().Quaternion(), GetTraceChannel(), FCollisionShape::MakeBox(FVector(8)), CollisionParams))
 			{
-				UActorComponent* HitComp = HitResult.GetComponent();
-				AddInteractive(HitComp);				
+				/*loop through hit results*/
+				for (auto HitResult : HitResults)
+				{
+					if (IsInteractive(Cast<UActorComponent>(HitResult.GetComponent())))
+					{
+						UActorComponent* HitComp = HitResult.GetComponent();						
+						TracedInteractives.AddUnique(HitComp);
+						
+						/*debugging*/
+						#if WITH_EDITOR
+						if (bDebugTrace)
+							DrawDebugSphere(GetWorld(), HitResult.Location, 12, 12, FColor::Cyan, false, 0.5f);
+						#endif
+
+					}
+					else
+					{
+						/*debugging*/
+						#if WITH_EDITOR
+						if (bDebugTrace)
+							DrawDebugSphere(GetWorld(), HitResult.Location, 12, 12, FColor::Red, false, 0.5f);
+						#endif
+					}
+				}
+			}			
+
+			/*debugging*/
+			#if WITH_EDITOR
+			if (bDebugTrace)
+			{
+				DrawDebugLine(GetWorld(), GetTraceStart(), GetTraceEnd(), FColor::Blue, false, 0.3f, (uint8)0U, 3.0f);
 			}
+			#endif
 		}
-	}
+	}	
 }
 
 FVector UInteractiveManagerComponent::GetTraceStart()

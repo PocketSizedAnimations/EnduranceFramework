@@ -57,11 +57,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Interactions")
 		float TraceLength;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Interactions|Debug")
+		bool bDebugTrace = false;
+
 
 private:
 	/*all possible interactions near us*/
 	UPROPERTY()
 		TArray<UActorComponent*> Interactives;
+	UPROPERTY()
+		TArray<UActorComponent*> TracedInteractives;
 	/*the current interaction we're using actively*/
 	UPROPERTY()
 		UActorComponent* ActiveInteraction;
@@ -95,6 +100,9 @@ public:
 public:
 	UFUNCTION(BlueprintCallable)
 		virtual bool Interact(UActorComponent* Interactive);
+	/*client request to server to interact with object*/
+	UFUNCTION(Reliable, Server, WithValidation)
+		virtual void ServerRequestInteract(UActorComponent* Interactive);
 	UFUNCTION(BlueprintCallable)
 		virtual void CancelInteraction(UActorComponent* Interactive);
 
@@ -102,6 +110,8 @@ public:
 	//===========INTERACTIVES MANAGEMENT===========
 	//============================================
 protected:
+	UFUNCTION()
+		virtual void CalcInteractives();
 	UFUNCTION()
 		virtual bool IsInteractive(UActorComponent* Interactive);
 	UFUNCTION()
@@ -114,6 +124,10 @@ protected:
 		virtual void ClearActiveInteraction();
 	UFUNCTION()
 		virtual void UpdateActiveInteractiveStatus();
+	UFUNCTION()
+		virtual void NotifyInteractiveOfHover(UActorComponent*& Interactive);
+	UFUNCTION()
+		virtual void NotifyInteractiveOfUnhover(UActorComponent*& Interactive);
 public:
 	UFUNCTION(BlueprintPure)
 		UActorComponent* GetCurrentInteractive();
@@ -124,7 +138,7 @@ public:
 	//===============================
 	//============TRACING============
 	//===============================
-protected:
+protected:	
 	UFUNCTION()
 		virtual void TraceForInteractives();
 	UFUNCTION()

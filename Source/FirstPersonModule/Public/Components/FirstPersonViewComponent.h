@@ -40,6 +40,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Arms")
 		FVector ArmsOffset;
 
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+		TSubclassOf<class UUserWidget> HUDClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+		bool bAutoShowHUD = true;
+	UPROPERTY()
+		UUserWidget* PlayerHUD;
+
 	//===================================================================================================
 	//=============================================FUNCTIONS=============================================
 	//===================================================================================================
@@ -73,6 +81,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Mesh")
 		UFirstPersonArmsComponent* GetArmsMeshComponent() {return Arms;};
 		
-
-
+	//===========================
+	//============HUD============
+	//===========================
+public:
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		virtual void InitializePlayerHUD(APlayerController* PlayerController);
 };

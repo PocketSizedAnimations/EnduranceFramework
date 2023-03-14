@@ -38,8 +38,9 @@ public class FirstPersonModule : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-				"Engine"
-			}
+				"Engine",
+                "UMG"
+            }
 			);
 		
 		
